@@ -27,6 +27,7 @@
             <h2>My projects</h2>
             <ul>
                 <a href="https://vk.com/hobbyhorse_smolensk"><li>hobbyhorse</li></a>
+                <a href="https://music.yandex.ru/artist/16778029"><li>music</li></a>
               
             </ul>
             
@@ -53,8 +54,8 @@
 }
 
 function Circle() {
-  WIDTH = window.innerWidth;
-  HEIGHT = window.innerHeight;
+  WIDTH = window.innerWidth+100;
+  HEIGHT = window.innerHeight+100;
   this.s = {
     ttl: 8e3,
     xmax: 5,
@@ -100,8 +101,8 @@ function Circle() {
     con.fill()
   };
   this.move = function() {
-    WIDTH = window.innerWidth;
-    HEIGHT = window.innerHeight;
+    WIDTH = window.innerWidth+140;
+    HEIGHT = window.innerHeight+140;
     this.x += this.rt / this.hl * this.dx;
     this.y += this.rt / this.hl * this.dy;
     if (this.x > WIDTH || this.x < 0) this.dx *= -1;
@@ -122,8 +123,8 @@ var g;
 var pxs = new Array;
 var rint = 60;
 $(document).ready(function() {
-  WIDTH = "100%";
-  HEIGHT = "100%";
+  WIDTH = "120%";
+  HEIGHT = "120%";
     
     
     $('#header').show(1000, function(){});
@@ -131,8 +132,8 @@ $(document).ready(function() {
     
     
   $("#container").width(WIDTH).height(HEIGHT);
-  WIDTH = window.innerWidth;
-  HEIGHT = window.innerHeight;
+  WIDTH = window.innerWidth+140;
+  HEIGHT = window.innerHeight+140;
   canvas = document.getElementById("pixie");
   $(canvas).attr("width", WIDTH).attr("height", HEIGHT);
   con = canvas.getContext("2d");
