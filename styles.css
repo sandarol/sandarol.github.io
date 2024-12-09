@@ -1,0 +1,131 @@
+/* Общие стили */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif; /* Применение нового шрифта */
+    background-color: #F9FAFB;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Адаптивность */
+@media screen and (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+}
+
+/* Блок с фотографией и именем */
+.profile-block {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-picture {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid #ffa500;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    transition: transform .3s ease;
+}
+
+.profile-picture:hover {
+    transform: scale(1.05);
+}
+
+.name {
+    font-size: 32px;
+    margin-top: 10px;
+    color: white;
+}
+
+.subtitle {
+    font-size: 18px;
+    color: white;
+    margin-top: 5px;
+}
+
+/* Карточка с информацией */
+.about-me-card {
+    max-width: 600px;
+    padding: 30px;
+    background-color: #fff;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.about-me-text {
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+/* Ссылки на соцсети */
+.social-icons {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 20px;
+}
+
+.social-icons li {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.social-icons a {
+    color: orange;
+    font-size: 36px;
+    transition: transform .3s ease;
+}
+
+.social-icons a:hover {
+    transform: scale(1.1);
+}
+
+.social-icons span {
+    font-size: 12px;
+    color: black;
+    margin-top: 5px;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background: linear-gradient(to right, #31a4ff, #187aff);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+    0% {background-position: 0% 50%}
+    50% {background-position: 100% 50%}
+    100% {background-position: 0% 50%}
+}
+
+p>b{
+    color: #187aff;
+}
+.call-to-action {
+    text-align: center; /* Центрирование текста */
+    font-weight: bold; /* Жирность текста */
+    margin-bottom: 20px; /* Отступ снизу для улучшения визуального восприятия */
+}
