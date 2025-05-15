@@ -1,4 +1,20 @@
 <!DOCTYPE html>
+<html>
+<head>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+</head>
+<body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs>
+        <a-entity gltf-model="url(model.glb)" scale="0.1 0.1 0.1"></a-entity>
+        <a-marker-camera preset="hiro"></a-marker-camera>
+    </a-scene>
+</body>
+</html>
+
+
+<!--
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -9,14 +25,12 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Блок с фотографией и именем -->
     <div class="profile-block">
         <img src="ava.jpg" alt="Фото" class="profile-picture">
         <h1 class="name">Иванов Сергей</h1>
         <p class="subtitle">Контентмейкер, программист, <br>предприниматель</p>
     </div>
     
-    <!-- Информация о вас -->
     <div class="about-me-card">
         <p class="about-me-text">
             <p class="call-to-action">
@@ -24,7 +38,6 @@
 </p> <br>
         </p>
         
-        <!-- Ссылки на соцсети -->
         <ul class="social-icons">
             <li>
                 <a href="https://vk.com/sandarol" target="_blank"><i class="fab fa-vk"></i></a>
@@ -45,11 +58,9 @@
         </ul>
     </div>
     
-    <!-- Скрипт для иконок Font Awesome -->
     <script defer src="https://use.fontawesome.com/releases/v6.4.0/js/all.js"></script>
     
-    <!-- Собственный скрипт -->
     <script src="main.js"></script>
 </body>
 </html>
-
+-->
