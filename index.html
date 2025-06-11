@@ -15,15 +15,16 @@
         }
         .business-card {
             position: absolute;
-            top: 20px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translate(-50%, -50%);
             background: rgba(255, 255, 255, 0.9);
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             text-align: center;
             animation: fadeInUp 1s ease-in-out;
+            display: none; /* Скрываем до распознавания */
         }
         .business-card img {
             max-width: 80px;
@@ -60,19 +61,16 @@
 
     <!-- A-Frame AR.js сцена -->
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-        <!-- Отслеживание маркера (деформированный, бликовый и при плохом освещении) -->
-        <!-- Для большей надежности используем NFT маркер -->
-        <a-nft type="nft" url="4869fcfb-6b98-46fb-86d7-f86633f86fc3.fset3" smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5">
-            <!-- 3D-модель или элементы можно разместить здесь -->
-            <a-plane color="white" width="1" height="0.5" position="0 0 0"></a-plane>
+        <a-nft type="nft" url="4869fcfb-6b98-46fb-86d7-f86633f86fc3.fset3" smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5" id="marker">
+            <!-- Триггер для отображения визитки -->
+            <a-entity id="trigger" geometry="primitive: plane; width: 1; height: 0.5" material="opacity: 0"></a-entity>
         </a-nft>
 
-        <!-- Камера -->
         <a-entity camera></a-entity>
     </a-scene>
 
-    <!-- Визитка поверх видео -->
-    <div class="business-card">
+    <!-- Визитка -->
+    <div class="business-card" id="businessCard">
         <img src="4869fcfb-6b98-46fb-86d7-f86633f86fc3.jpg" alt="Логотип">
         <h1>Имя Фамилия</h1>
         <p>Должность / Компания</p>
@@ -82,6 +80,18 @@
             <a href="https://linkedin.com/in/yourprofile" target="_blank">LinkedIn</a>
         </div>
     </div>
+
+    <script>
+        // Показываем визитку при распознавании маркера
+        document.querySelector('a-scene').addEventListener('markerFound', () => {
+            document.getElementById('businessCard').style.display = 'block';
+        });
+
+        // Скрываем визитку при потере маркера
+        document.querySelector('a-scene').addEventListener('markerLost', () => {
+            document.getElementById('businessCard').style.display = 'none';
+        });
+    </script>
 
 </body>
 </html>
