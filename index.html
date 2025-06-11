@@ -2,63 +2,105 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>AR-визитка на NFT-маркере</title>
+  <title>AR NFT Визитка</title>
   <style>
-    /* Стиль для полноэкранного отображения без отступов */
-    body, html { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
-    /* При желании можно добавить стили загрузочного экрана или подсказок */
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: black;
+      width: 100%;
+      height: 100%;
+    }
   </style>
-  <!-- Подключение A-Frame и AR.js (NFT build) через CDN -->
+  <!-- A-Frame + AR.js (NFT) через CDN -->
   <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-  <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/aframe/build/aframe-ar-nft.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar-nft.js"></script>
 </head>
 <body>
-  <!-- A-Frame сцена с подключением AR.js -->
-  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-  <a-marker preset="hiro">
-    <a-entity id="business-card" scale="1 1 1">
-      <!-- фон -->
-      <a-plane color="#111111" opacity="0.8" width="1.5" height="1"></a-plane>
-      <!-- логотип -->
-      <a-image src="#logo-img" width="0.4" height="0.4" position="-0.5 0.2 0.01"></a-image>
-      <!-- имя -->
-      <a-text value="Иван Иванов" position="0 0.25 0.02" color="#00FFFF" align="center" width="2"></a-text>
-      <!-- ссылки -->
-      <a-text id="link1" value="LinkedIn" position="-0.4 -0.1 0.02" color="#00FFAA" width="1.5"></a-text>
-      <a-text id="link2" value="Twitter" position="0.1 -0.1 0.02" color="#00FFAA" width="1.5"></a-text>
-    </a-entity>
-  </a-marker>
+  <a-scene
+    embedded
+    arjs="sourceType: webcam; trackingMethod: best; debugUIEnabled: false;"
+    vr-mode-ui="enabled: false"
+    renderer="logarithmicDepthBuffer: true;"
+  >
+    <!-- Загрузка ассетов -->
+    <a-assets>
+      <img id="logo" src="logo.jpg" crossorigin="anonymous">
+    </a-assets>
 
-  <a-entity camera></a-entity>
-</a-scene>
+    <!-- NFT-маркер -->
+    <a-nft
+      type="nft"
+      url="logo"
+      smooth="true"
+      smoothCount="10"
+      smoothTolerance="0.01"
+      smoothThreshold="5"
+      emitevents="true"
+    >
+      <!-- Визитка -->
+      <a-entity id="card" visible="false" scale="0 0 0">
+        <!-- фон -->
+        <a-plane color="#111111" opacity="0.8" width="1.5" height="1"></a-plane>
+        <!-- логотип -->
+        <a-image src="#logo" width="0.4" height="0.4" position="-0.5 0.2 0.01"></a-image>
+        <!-- имя -->
+        <a-text value="Иван Иванов" position="0 0.25 0.02" color="#00FFFF" align="center" width="2"></a-text>
+        <!-- ссылки -->
+        <a-text id="link1" value="LinkedIn" position="-0.4 -0.1 0.02" color="#00FFAA" width="1.5"></a-text>
+        <a-text id="link2" value="Twitter" position="0.1 -0.1 0.02" color="#00FFAA" width="1.5"></a-text>
+      </a-entity>
 
-  <!-- Скрипт для обработки взаимодействий -->
+      <!-- Анимации -->
+      <a-animation
+        begin="markerFound"
+        attribute="scale"
+        from="0 0 0"
+        to="1 1 1"
+        dur="500"
+        easing="ease-out"
+        fill="forwards"
+        target="#card"
+      ></a-animation>
+      <a-animation
+        begin="markerFound"
+        attribute="visible"
+        from="false"
+        to="true"
+        dur="1"
+        fill="forwards"
+        target="#card"
+      ></a-animation>
+      <a-animation
+        begin="markerLost"
+        attribute="visible"
+        to="false"
+        dur="1"
+        fill="forwards"
+        target="#card"
+      ></a-animation>
+    </a-nft>
+
+    <!-- Камера -->
+    <a-entity camera></a-entity>
+  </a-scene>
+
   <script>
-    // Получаем элементы визитки и ссылок по ID
-    const businessCard = document.getElementById('business-card');
     const link1 = document.getElementById('link1');
     const link2 = document.getElementById('link2');
-    // События AR.js: при обнаружении маркера плавно показываем визитку (через анимацию), при потере скрываем
-    const marker = document.querySelector('a-nft');
-    marker.addEventListener('markerFound', () => {
-      console.log('Marker found - показываем визитку');
-      // (Анимации A-Frame с атрибутами begin="markerFound" выполнят масштабирование и показ)
-    });
-    marker.addEventListener('markerLost', () => {
-      console.log('Marker lost - скрываем визитку');
-      // (Анимация с begin="markerLost" скроет визитку)
-    });
-    // Назначаем действия по клику на элементы ссылок
-    // Пример: открыть профиль в новой вкладке (замените URL на свои ссылки)
+
     link1.addEventListener('click', () => {
       window.open('https://www.linkedin.com/in/ivan-ivanov', '_blank');
     });
+
     link2.addEventListener('click', () => {
       window.open('https://twitter.com/ivanivanov', '_blank');
     });
   </script>
 </body>
 </html>
+
 
 
 
