@@ -14,47 +14,23 @@
 </head>
 <body>
   <!-- A-Frame сцена с подключением AR.js -->
-  <a-scene embedded 
-           cursor="rayOrigin: mouse; fuse: false" 
-           vr-mode-ui="enabled: false" 
-           arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;">
-    <!-- Загрузка изображения логотипа в ассеты (для использования на визитке) -->
-    <a-assets>
-      <!-- Замените "logo.png" на путь к файлу изображения вашего логотипа -->
-      <img id="logo-img" src="ava.jpg" crossorigin="anonymous" />
-    </a-assets>
-
-    <!-- Якорь NFT-маркера: 'myMarker' без расширения соответствует файлам myMarker.fset/.iset/.fset3 -->
-    <a-nft type="nft" url="logo" smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5" emitevents="true">
-      <!-- Контейнер визитки (плоскость-карточка). Изначально невидима и масштаб 0 для анимации появления -->
-      <a-entity id="business-card" visible="false" scale="0 0 0">
-        <!-- Фон визитки: полупрозрачный тёмный прямоугольник -->
-        <a-plane color="#111111" opacity="0.8" width="1.5" height="1" position="0 0 0" material="shader: flat;"></a-plane>
-        <!-- Логотип на визитке (пример: изображение логотипа компании) -->
-        <a-image src="#logo-img" width="0.4" height="0.4" position="-0.5 0.2 0.01"></a-image>
-        <!-- Имя и должность (пример) -->
-        <a-text value="Иван Иванов" position="0 0.25 0.02" color="#00FFFF" align="center" width="2"></a-text>
-        <!-- Пример ссылки 1 (например, LinkedIn) -->
-        <a-text id="link1" value="LinkedIn" position="-0.4 -0.1 0.02" color="#00FFAA" width="1.5"></a-text>
-        <!-- Пример ссылки 2 (например, Twitter) -->
-        <a-text id="link2" value="Twitter" position="0.1 -0.1 0.02" color="#00FFAA" width="1.5"></a-text>
-      </a-entity>
-
-      <!-- Анимация появления визитки при обнаружении маркера -->
-      <a-animation begin="markerFound" attribute="scale" dur="500" fill="forwards"
-                  from="0 0 0" to="1 1 1" easing="ease-out" target="#business-card"></a-animation>
-      <a-animation begin="markerFound" attribute="visible" dur="1" fill="forwards"
-                  from="false" to="true" target="#business-card"></a-animation>
-      <a-animation begin="markerLost" attribute="visible" dur="1" fill="forwards"
-                  to="false" target="#business-card"></a-animation>
-    </a-nft>
-
-    <!-- Камера с курсором для обработки кликов -->
-    <a-entity camera position="0 0 0">
-      <!-- Невидимый курсор (луч из центра экрана) для отслеживания наведений/кликов -->
-      <a-cursor opacity="0"></a-cursor>
+  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+  <a-marker preset="hiro">
+    <a-entity id="business-card" scale="1 1 1">
+      <!-- фон -->
+      <a-plane color="#111111" opacity="0.8" width="1.5" height="1"></a-plane>
+      <!-- логотип -->
+      <a-image src="#logo-img" width="0.4" height="0.4" position="-0.5 0.2 0.01"></a-image>
+      <!-- имя -->
+      <a-text value="Иван Иванов" position="0 0.25 0.02" color="#00FFFF" align="center" width="2"></a-text>
+      <!-- ссылки -->
+      <a-text id="link1" value="LinkedIn" position="-0.4 -0.1 0.02" color="#00FFAA" width="1.5"></a-text>
+      <a-text id="link2" value="Twitter" position="0.1 -0.1 0.02" color="#00FFAA" width="1.5"></a-text>
     </a-entity>
-  </a-scene>
+  </a-marker>
+
+  <a-entity camera></a-entity>
+</a-scene>
 
   <!-- Скрипт для обработки взаимодействий -->
   <script>
