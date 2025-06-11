@@ -30,6 +30,7 @@
       font-family: Arial, sans-serif;
       animation: fadeIn 1s ease-in-out;
       min-width: 250px;
+      z-index: 1000;
     }
     .business-card h1 {
       margin: 0 0 10px 0;
@@ -61,9 +62,23 @@
 
   <script>
     const start = async () => {
+      // Проверка доступа к камере
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Ваш браузер не поддерживает доступ к камере.");
+        return;
+      }
+
+      // Запрос разрешения на камеру заранее
+      try {
+        await navigator.mediaDevices.getUserMedia({ video: true });
+      } catch (err) {
+        alert("Не удалось получить доступ к камере: " + err);
+        return;
+      }
+
       const mindarThree = new window.MINDAR.IMAGE.MindARThree({
         container: document.querySelector("#ar-container"),
-        imageTargetSrc: 'targets.mind', // путь к вашей NFT метке
+        imageTargetSrc: 'targets.mind',
         filterMinCF: 0.001,
         filterBeta: 0.001,
       });
@@ -83,7 +98,9 @@
       `;
 
       anchor.onTargetFound = () => {
-        document.body.appendChild(cardElement);
+        if (!document.body.contains(cardElement)) {
+          document.body.appendChild(cardElement);
+        }
       };
 
       anchor.onTargetLost = () => {
@@ -96,12 +113,15 @@
       renderer.setAnimationLoop(() => {
         renderer.render(scene, camera);
       });
-    }
+    };
 
-    start();
+    window.addEventListener('load', () => {
+      start();
+    });
   </script>
 </body>
 </html>
+
 
 
 
