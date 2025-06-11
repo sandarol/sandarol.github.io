@@ -49,7 +49,7 @@
       
       <!-- Основной контейнер визитки -->
       <a-entity
-        position="0 0 0.01"
+        position="0 0 0"
         scale="0.5 0.5 0.5"
         rotation="-90 0 0"
         animation__appear="property: scale; from: 0 0 0; to: 0.5 0.5 0.5; dur: 1000; easing: easeOutElastic">
@@ -59,7 +59,7 @@
           position="0 0 0"
           width="6"
           height="3.5"
-          material="color: #ffffff; opacity: 0.5; shader: flat"
+          material="color: #ffffff; opacity: 0; shader: flat"
           shadow="cast: true; receive: true"
           geometry="borderRadius: 0.2">
         </a-plane>
@@ -112,7 +112,7 @@
 
       <!-- 3D-объект (glTF-модель) -->
       <a-entity
-        position="0 0 0.5"
+        position="0 0 5"
         scale="0.5 0.5 0.5"
         rotation="0 0 0"
         gltf-model="h.glb"
