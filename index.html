@@ -3,53 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>AR NFT Визитка</title>
-  <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.6.0/dist/aframe.min.js"></script>
-  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+  <title>AR Визитка (Pattern Marker)</title>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
   <style>
     body, html {margin:0; overflow:hidden; width:100%; height:100%;}
-    .arjs-loader {position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);
-      display:flex;align-items:center;justify-content:center;color:white;z-index:999;}
-    .card {
-      width:1.5; height:0.9; border-radius:0.05; 
-      material: color:#222; opacity:0.9;
-    }
-    .text { color:#fff; align:center; }
-    .link {
-      color: #1da1f2; 
-      position:0  -0.25 0.01;
-      event-set__enter="_event: mouseenter; scale: 1.1 1.1 1.1"
-      event-set__leave="_event: mouseleave; scale: 1 1 1";
+    .arjs-loader {
+      position:absolute;
+      top:0; left:0;
+      width:100%; height:100%;
+      background:rgba(0,0,0,0.8);
+      display:flex; align-items:center; justify-content:center;
+      color:white; z-index:999;
+      font-size:1.2em;
     }
   </style>
 </head>
 <body>
   <div class="arjs-loader"><div>Загрузка AR...</div></div>
-  <a-scene embedded vr-mode-ui="enabled:false" renderer="logarithmicDepthBuffer:true"
-           arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled:false;">
 
-    <a-nft type="nft" url="4869fcfb-6b98-46fb-86d7-f86633f86fc3.fset3" smooth="true" smoothCount="10"
-           smoothTolerance="0.01" smoothThreshold="5">
-      <a-entity position="0 0 0">
-        <a-plane class="card" position="0 0 0" rotation="-90 0 0"></a-plane>
-        <a-text class="text" value="Иван Иванов" align="center" position="0 0.2 0.01" width="1.4"></a-text>
-        <a-entity class="link" text="value: Twitter; align:center; width:1; color:#1da1f2"
-                  position="0 0 0.01"
-                  link="href: https://twitter.com/yourprofile; target: _blank"></a-entity>
-        <a-entity class="link" text="value: LinkedIn; align:center; width:1; color:#0077b5"
-                  position="0 -0.2 0.01"
-                  link="href: https://linkedin.com/in/yourprofile; target: _blank"></a-entity>
-        <!-- добавьте другие соцсети -->
-      </a-entity>
-    </a-nft>
+  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+    <!-- Используем .patt -->
+    <a-marker type="pattern" url="marker.patt">
+      <!-- Визитка -->
+      <a-plane position="0 0 0" rotation="-90 0 0" width="1.5" height="1" color="#222" opacity="0.85"></a-plane>
+      <a-text value="Иван Иванов" align="center" color="#fff"
+              position="0 0.3 0.01" width="2"></a-text>
+      <a-text value="Twitter" align="center" color="#1da1f2"
+              position="0 0.1 0.01" width="2"
+              event-set__enter="_event: mouseenter; scale: 1.2 1.2 1.2"
+              event-set__leave="_event: mouseleave; scale: 1 1 1"
+              onclick="window.open('https://twitter.com/yourprofile', '_blank')">
+      </a-text>
+      <a-text value="LinkedIn" align="center" color="#0077b5"
+              position="0 -0.1 0.01" width="2"
+              event-set__enter="_event: mouseenter; scale: 1.2 1.2 1.2"
+              event-set__leave="_event: mouseleave; scale: 1 1 1"
+              onclick="window.open('https://linkedin.com/in/yourprofile', '_blank')">
+      </a-text>
+    </a-marker>
 
     <a-entity camera></a-entity>
   </a-scene>
+
   <script>
-    document.querySelector('.arjs-loader').remove();
+    document.querySelector('.arjs-loader').style.display = 'none';
   </script>
 </body>
 </html>
+
 
 
 
