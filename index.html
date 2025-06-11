@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>AR Business Card Overlay</title>
   <!-- Подключаем A-Frame -->
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
@@ -16,19 +16,19 @@
     #ar-scene {
       width: 100vw;
       height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
     }
     /* Стили для кнопок и текста */
     .social-button {
       cursor: pointer;
       background: linear-gradient(45deg, #6b48ff, #00ddeb);
       border-radius: 10px;
-      padding: 10px 20px;
       color: white;
       font-family: Arial, sans-serif;
       text-align: center;
       text-decoration: none;
-      display: inline-block;
-      margin: 5px;
       transition: transform 0.3s;
     }
     .social-button:hover {
@@ -40,15 +40,16 @@
   <!-- A-Frame сцена -->
   <a-scene
     vr-mode-ui="enabled: false"
-    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
+    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3; sourceWidth: 1280; sourceHeight: 720; displayWidth: 1280; displayHeight: 720;"
     embedded
-    id="ar-scene">
+    id="ar-scene"
+    renderer="antialias: true; logarithmicDepthBuffer: true;">
     
     <!-- Камера -->
     <a-camera
-      gps-camera
-      rotation-reader
-      position="0 0 0">
+      position="0 0 0"
+      look-controls="enabled: false"
+      wasd-controls="enabled: false">
     </a-camera>
 
     <!-- Маркер Hiro -->
@@ -64,7 +65,7 @@
       <a-entity
         position="0 0 0.01"
         scale="0.5 0.5 0.5"
-        rotation="0 0 0"
+        rotation="90 0 0"
         animation__appear="property: scale; from: 0 0 0; to: 0.5 0.5 0.5; dur: 1000; easing: easeOutElastic">
         
         <!-- Фон визитки -->
@@ -106,23 +107,17 @@
           material="shader: flat">
         </a-video>
 
-        <!-- Кнопки соцсетей -->
-        <a-entity position="1.2 -0.3 0.01">
-          <a-text
-            value="Connect with me:"
-            position="-0.5 0.7 0"
-            width="2"
-            color="#333"
-            align="center"
-            font="https://cdn.aframe.io/fonts/Exo2Bold.fnt">
-          </a-text>
+        <!-- Кнопки соцсетей на визитке -->
+        <a-entity position="1.5 -0.9 0.01">
           <a-plane
-            position="0 0.3 0.01"
+            position="-0.6 0 0.01"
             width="1"
             height="0.4"
             material="color: #1DA1F2; opacity: 0.9"
             class="social-button"
-            event-set__click="_target: window; _type: location.href='https://twitter.com/yourprofile'">
+            cursor="rayOrigin: mouse"
+            raycaster="objects: .social-button"
+            link="href: https://twitter.com/yourprofile">
             <a-text
               value="Twitter"
               position="0 0 0.01"
@@ -132,12 +127,14 @@
             </a-text>
           </a-plane>
           <a-plane
-            position="0 -0.3 0.01"
+            position="0.6 0 0.01"
             width="1"
             height="0.4"
             material="color: #0077B5; opacity: 0.9"
             class="social-button"
-            event-set__click="_target: window; _type: location.href='https://linkedin.com/in/yourprofile'">
+            cursor="rayOrigin: mouse"
+            raycaster="objects: .social-button"
+            link="href: https://linkedin.com/in/yourprofile">
             <a-text
               value="LinkedIn"
               position="0 0 0.01"
@@ -153,7 +150,8 @@
       <a-entity
         position="4 0 0.5"
         scale="0.5 0.5 0.5"
-        animation="property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear">
+        rotation="90 0 0"
+        animation="property: rotation; to: 90 360 0; loop: true; dur: 5000; easing: linear">
         <a-sphere
           radius="0.5"
           material="color: #FFD700; shader: standard; metalness: 0.5; roughness: 0.4">
@@ -167,11 +165,38 @@
   </a-scene>
 
   <script>
-    // Улучшение трекинга
+    // Улучшение трекинга и мобильной совместимости
     AFRAME.registerComponent('arjs-video', {
       init: function () {
         this.el.sceneEl.renderer.physicallyCorrectLights = true;
-        this.el.setAttribute('arjs', 'trackingMethod: best; sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3;');
+        this.el.setAttribute('arjs', 'trackingMethod: best; sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3; sourceWidth: 1280; sourceHeight: 720; displayWidth: 1280; displayHeight: 720;');
+        // Запрашиваем доступ к камере
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+          .then(stream => {
+            console.log('Camera access granted');
+          })
+          .catch(err => {
+            console.error('Camera access denied:', err);
+            alert('Please allow camera access to use AR.');
+          });
+      }
+    });
+
+    // Обработка изменения ориентации экрана
+    window.addEventListener('resize', () => {
+      const scene = document.querySelector('a-scene');
+      scene.resize();
+    });
+
+    // Регистрация компонента для обработки кликов
+    AFRAME.registerComponent('link', {
+      schema: {
+        href: { type: 'string' }
+      },
+      init: function () {
+        this.el.addEventListener('click', () => {
+          window.location.href = this.data.href;
+        });
       }
     });
   </script>
