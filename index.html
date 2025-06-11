@@ -1,178 +1,107 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AR Business Card</title>
+  <title>AR Model Viewer</title>
   <style>
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       overflow: hidden;
-      background: rgba(255, 255, 255, 0.3);
+      font-family: Arial, sans-serif;
     }
-    .button-container {
+    .controls {
       position: fixed;
-      bottom: 30px;
+      bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
       gap: 20px;
-      z-index: 1000;
+      z-index: 10;
     }
-    .arrow-button {
-      width: 50px;
-      height: 50px;
-      background-color: rgba(255, 255, 255, 0.1);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      color: #fff;
-      font-size: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .controls button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
+      transition: background-color 0.3s;
     }
-    .arrow-button:hover {
-      background-color: rgba(255, 255, 255, 0.2);
-      border-color: #007bff;
-      transform: scale(1.1);
+    .controls button:hover {
+      background-color: #0056b3;
     }
-    .arrow-button:active {
-      background-color: rgba(255, 255, 255, 0.3);
-      transform: scale(0.95);
-    }
-    .arrow-button:disabled {
-      opacity: 0.5;
+    .controls button:disabled {
+      background-color: #cccccc;
       cursor: not-allowed;
     }
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      z-index: 2000;
-      display: none;
-    }
-    .error-message {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(255, 0, 0, 0.8);
-      color: #fff;
-      padding: 10px 20px;
-      border-radius: 5px;
-      z-index: 2000;
-      display: none;
-    }
   </style>
-  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-  <script src="https://unpkg.com/aframe-ar@0.4.1/dist/aframe-ar.min.js"></script>
-  <script src="https://unpkg.com/three@0.160.0/examples/jsm/loaders/DRACOLoader.js"></script>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
 </head>
 <body>
-  <div class="loading-overlay" id="loading">Loading model...</div>
-  <div class="error-message" id="error">Failed to load model</div>
-  <a-scene
-    embedded
-    arjs="sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3; debugUIEnabled: false;"
-    renderer="antialias: true; alpha: true;">
-    <a-assets timeout="60000">
-      <a-asset-item id="model1" src="1.glb"></a-asset-item>
-      <a-asset-item id="model2" src="2.glb"></a-asset-item>
-      <a-asset-item id="model3" src="3.glb"></a-asset-item>
-      <a-asset-item id="model4" src="4.glb"></a-asset-item>
-      <a-asset-item id="model5" src="5.glb"></a-asset-item>
-      <a-asset-item id="model6" src="6.glb"></a-asset-item>
-      <a-asset-item id="model7" src="7.glb"></a-asset-item>
-      <a-asset-item id="model8" src="8.glb"></a-asset-item>
-      <a-asset-item id="model9" src="9.glb"></a-asset-item>
+  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+    <a-assets>
+      <!-- Предварительно определяем активы, но загружаем модель динамически -->
     </a-assets>
     <a-marker preset="hiro">
-      <a-entity id="model" scale="0.3 0.3 0.3" position="0 0 0">
-        <a-entity
-          id="model-entity"
-          gltf-model="#model1"
-          animation="property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear">
-        </a-entity>
+      <a-entity id="model" rotation="0 0 0" scale="0.5 0.5 0.5">
+        <!-- Модель будет добавлена динамически -->
       </a-entity>
     </a-marker>
     <a-entity camera></a-entity>
   </a-scene>
 
-  <div class="button-container">
-    <button class="arrow-button" onclick="switchModel('prev')">◀</button>
-    <button class="arrow-button" onclick="switchModel('next')">▶</button>
+  <div class="controls">
+    <button onclick="previousModel()">←</button>
+    <button onclick="nextModel()">→</button>
   </div>
 
   <script>
-    const TOTAL_MODELS = 9;
-    let currentModel = 1;
+    // Список моделей
+    const models = Array.from({ length: 9 }, (_, i) => `${i + 1}.glb`);
+    let currentModelIndex = 0;
 
-    // Configure DRACO loader
-    AFRAME.registerSystem('gltf-model', {
-      init: function () {
-        this.dracoLoader = new THREE.DRACOLoader();
-        this.dracoLoader.setDecoderPath('https://unpkg.com/three@0.160.0/examples/jsm/libs/draco/');
-        this.dracoLoader.setDecoderConfig({ type: 'js' });
-      },
-      getDRACOLoader: function () {
-        return this.dracoLoader;
+    // Функция для загрузки модели
+    function loadModel(index) {
+      const modelEntity = document.getElementById('model');
+      // Очищаем предыдущую модель
+      modelEntity.innerHTML = '';
+      // Добавляем новую модель
+      const model = document.createElement('a-entity');
+      model.setAttribute('gltf-model', `url(${models[index]})`);
+      model.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear');
+      modelEntity.appendChild(model);
+      updateButtons();
+    }
+
+    // Функция для обновления состояния кнопок
+    function updateButtons() {
+      const prevButton = document.querySelector('button[onclick="previousModel()"]');
+      const nextButton = document.querySelector('button[onclick="nextModel()"]');
+      prevButton.disabled = currentModelIndex === 0;
+      nextButton.disabled = currentModelIndex === models.length - 1;
+    }
+
+    // Переключение на предыдущую модель
+    function previousModel() {
+      if (currentModelIndex > 0) {
+        currentModelIndex--;
+        loadModel(currentModelIndex);
       }
-    });
-
-    function showLoading(show) {
-      document.getElementById('loading').style.display = show ? 'flex' : 'none';
     }
 
-    function showError(show) {
-      document.getElementById('error').style.display = show ? 'block' : 'none';
-      if (show) setTimeout(() => showError(false), 3000);
+    // Переключение на следующую модель
+    function nextModel() {
+      if (currentModelIndex < models.length - 1) {
+        currentModelIndex++;
+        loadModel(currentModelIndex);
+      }
     }
 
-    function switchModel(direction) {
-      const newModel = direction === 'next'
-        ? (currentModel % TOTAL_MODELS) + 1
-        : currentModel === 1 ? TOTAL_MODELS : currentModel - 1;
-
-      showLoading(true);
-      const modelEntity = document.getElementById('model-entity');
-      modelEntity.setAttribute('gltf-model', `#model${newModel}`);
-
-      modelEntity.addEventListener('model-loaded', () => {
-        showLoading(false);
-        currentModel = newModel;
-      }, { once: true });
-
-      modelEntity.addEventListener('model-error', () => {
-        console.error(`Failed to load model ${newModel}`);
-        showLoading(false);
-        showError(true);
-      }, { once: true });
-    }
-
-    // Preload first model
-    window.onload = () => {
-      showLoading(true);
-      const modelEntity = document.getElementById('model-entity');
-      modelEntity.addEventListener('model-loaded', () => showLoading(false), { once: true });
-      modelEntity.addEventListener('model-error', () => {
-        console.error('Failed to load initial model');
-        showLoading(false);
-        showError(true);
-      }, { once: true });
-    };
+    // Загружаем первую модель при старте
+    loadModel(currentModelIndex);
   </script>
 </body>
 </html>
