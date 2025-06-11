@@ -14,40 +14,40 @@
   <div id="instructions">Наведи камеру на метку Hiro</div>
   <div id="error" style="display: none;">Ошибка: не удалось получить доступ к камере или распознать метку. Проверь разрешения и освещение.</div>
 
-  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
 
   <a-scene
     embedded
-    arjs="sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3; debugUIEnabled: false;"
+    arjs="sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3; debugUIEnabled: false; sourceWidth: 1280; sourceHeight: 720;"
     renderer="logarithmicDepthBuffer: true;"
   >
     <a-marker preset="hiro">
-      <a-entity position="0 0 0">
-        <a-plane width="2.2" height="1.2" color="#ffffff" material="opacity: 0.95; side: double;" shadow="cast: true; receive: true;" rotation="-90 0 0">
-          <a-animation attribute="rotation" from="90 0 0" to="90 360 0" dur="10000" repeat="indefinite" easing="linear"></a-animation>
-          <a-animation attribute="position" from="0 -0.05 0" to="0 0.05 0" dur="2000" direction="alternate" repeat="indefinite" easing="ease-in-out"></a-animation>
-          <a-text value="Моя Визитка" position="0 0.45 0.01" align="center" color="#000000" scale="0.6 0.6 0.6" font="roboto" material="shader: flat;"></a-text>
-          <a-text value="Привет! Я [Твоё Имя]" position="0 0.25 0.01" align="center" color="#000000" scale="0.35 0.35 0.35" font="roboto" material="shader: flat;"></a-text>
+      <a-entity position="0 0 0" rotation="0 0 0">
+        <a-plane width="2.2" height="1.2" color="#ffffff" material="opacity: 0.95; side: double;">
+          <a-animation attribute="rotation" from="0 0 0" to="0 360 0" dur="10000" repeat="indefinite" easing="linear"></a-animation>
+          <a-animation attribute="position" from="0 0 0" to="0 0.1 0" dur="2000" direction="alternate" repeat="indefinite" easing="ease-in-out"></a-animation>
+          <a-text value="Моя Визитка" position="0 0.45 0.01" align="center" color="#000000" scale="0.7 0.7 0.7" font="roboto"></a-text>
+          <a-text value="Привет! Я [Твоё Имя]" position="0 0.25 0.01" align="center" color="#000000" scale="0.4 0.4 0.4" font="roboto"></a-text>
           
           <!-- Кнопка Facebook -->
-          <a-entity position="-0.75 -0.35 0.01">
-            <a-plane width="0.5" height="0.5" color="#4267B2" class="clickable" material="shader: flat;" cursor-listener>
-              <a-text value="FB" align="center" color="white" scale="0.4 0.4 0.4" font="roboto" material="shader: flat;"></a-text>
+          <a-entity position="-0.75 -0.35 0.01" cursor-listener>
+            <a-plane width="0.5" height="0.5" color="#4267B2">
+              <a-text value="FB" align="center" color="white" scale="0.4 0.4 0.4" font="roboto"></a-text>
             </a-plane>
           </a-entity>
           
           <!-- Кнопка Twitter -->
-          <a-entity position="0 -0.35 0.01">
-            <a-plane width="0.5" height="0.5" color="#1DA1F2" class="clickable" material="shader: flat;" cursor-listener>
-              <a-text value="TW" align="center" color="white" scale="0.4 0.4 0.4" font="roboto" material="shader: flat;"></a-text>
+          <a-entity position="0 -0.35 0.01" cursor-listener>
+            <a-plane width="0.5" height="0.5" color="#1DA1F2">
+              <a-text value="TW" align="center" color="white" scale="0.4 0.4 0.4" font="roboto"></a-text>
             </a-plane>
           </a-entity>
           
           <!-- Кнопка Instagram -->
-          <a-entity position="0.75 -0.35 0.01">
-            <a-plane width="0.5" height="0.5" color="#E1306C" class="clickable" material="shader: flat;" cursor-listener>
-              <a-text value="IG" align="center" color="white" scale="0.4 0.4 0.4" font="roboto" material="shader: flat;"></a-text>
+          <a-entity position="0.75 -0.35 0.01" cursor-listener>
+            <a-plane width="0.5" height="0.5" color="#E1306C">
+              <a-text value="IG" align="center" color="white" scale="0.4 0.4 0.4" font="roboto"></a-text>
             </a-plane>
           </a-entity>
         </a-plane>
@@ -78,6 +78,11 @@
     const instructions = document.getElementById('instructions');
     const errorDiv = document.getElementById('error');
     const scene = document.querySelector('a-scene');
+
+    // Проверка загрузки сцены
+    scene.addEventListener('loaded', () => {
+      console.log('Сцена загружена');
+    });
 
     // Проверка доступа к камере
     navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
