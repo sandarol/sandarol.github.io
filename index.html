@@ -24,8 +24,8 @@
   >
     <a-marker preset="hiro">
       <a-entity position="0 0 0">
-        <a-plane width="2.2" height="1.2" color="#ffffff" material="opacity: 0.95; side: double;" shadow="cast: true; receive: true;">
-          <a-animation attribute="rotation" to="0 360 0" dur="10000" repeat="indefinite" easing="linear"></a-animation>
+        <a-plane width="2.2" height="1.2" color="#ffffff" material="opacity: 0.95; side: double;" shadow="cast: true; receive: true;" rotation="90 0 0">
+          <a-animation attribute="rotation" from="90 0 0" to="90 360 0" dur="10000" repeat="indefinite" easing="linear"></a-animation>
           <a-animation attribute="position" from="0 -0.05 0" to="0 0.05 0" dur="2000" direction="alternate" repeat="indefinite" easing="ease-in-out"></a-animation>
           <a-text value="Моя Визитка" position="0 0.45 0.01" align="center" color="#000000" scale="0.6 0.6 0.6" font="roboto" material="shader: flat;"></a-text>
           <a-text value="Привет! Я [Твоё Имя]" position="0 0.25 0.01" align="center" color="#000000" scale="0.35 0.35 0.35" font="roboto" material="shader: flat;"></a-text>
