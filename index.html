@@ -62,16 +62,16 @@
       
       <!-- Основной контейнер визитки -->
       <a-entity
-        position="0 0 0.1"
-        scale="0.3 0.3 0.3"
-        animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear"
-        animation__appear="property: scale; from: 0 0 0; to: 0.3 0.3 0.3; dur: 1000; easing: easeOutElastic">
+        position="0 0 0.01"
+        scale="0.5 0.5 0.5"
+        rotation="0 0 0"
+        animation__appear="property: scale; from: 0 0 0; to: 0.5 0.5 0.5; dur: 1000; easing: easeOutElastic">
         
         <!-- Фон визитки -->
         <a-plane
           position="0 0 0"
-          width="4"
-          height="2.5"
+          width="6"
+          height="3.5"
           material="color: #ffffff; opacity: 0.9; shader: flat"
           shadow="cast: true; receive: true"
           geometry="borderRadius: 0.2">
@@ -80,16 +80,16 @@
         <!-- Имя и профессия -->
         <a-text
           value="John Doe"
-          position="-1.8 0.8 0.01"
-          width="3"
+          position="-2.8 1.2 0.01"
+          width="4"
           color="#333"
           align="left"
           font="https://cdn.aframe.io/fonts/Exo2Bold.fnt">
         </a-text>
         <a-text
           value="AR Developer | Creative Tech"
-          position="-1.8 0.5 0.01"
-          width="2.5"
+          position="-2.8 0.8 0.01"
+          width="3.5"
           color="#666"
           align="left"
           font="https://cdn.aframe.io/fonts/Exo2Bold.fnt">
@@ -98,55 +98,66 @@
         <!-- Видеоролик -->
         <a-video
           src="https://cdn.glitch.global/8ef370bc-96e4-4e72-b2aa-d1cb3e0cf711/sample-video.mp4"
-          position="-1.2 -0.2 0.01"
-          width="1.2"
-          height="0.8"
+          position="-1.8 -0.3 0.01"
+          width="1.8"
+          height="1.2"
           autoplay="true"
           loop="true"
           material="shader: flat">
         </a-video>
 
         <!-- Кнопки соцсетей -->
-        <a-entity position="0.8 -0.2 0.01">
+        <a-entity position="1.2 -0.3 0.01">
           <a-text
             value="Connect with me:"
-            position="-0.5 0.5 0"
-            width="1.5"
+            position="-0.5 0.7 0"
+            width="2"
             color="#333"
             align="center"
             font="https://cdn.aframe.io/fonts/Exo2Bold.fnt">
           </a-text>
           <a-plane
-            position="0 0.2 0.01"
-            width="0.8"
-            height="0.3"
+            position="0 0.3 0.01"
+            width="1"
+            height="0.4"
             material="color: #1DA1F2; opacity: 0.9"
             class="social-button"
             event-set__click="_target: window; _type: location.href='https://twitter.com/yourprofile'">
             <a-text
               value="Twitter"
               position="0 0 0.01"
-              width="1"
+              width="1.2"
               color="white"
               align="center">
             </a-text>
           </a-plane>
           <a-plane
-            position="0 -0.2 0.01"
-            width="0.8"
-            height="0.3"
+            position="0 -0.3 0.01"
+            width="1"
+            height="0.4"
             material="color: #0077B5; opacity: 0.9"
             class="social-button"
             event-set__click="_target: window; _type: location.href='https://linkedin.com/in/yourprofile'">
             <a-text
               value="LinkedIn"
               position="0 0 0.01"
-              width="1"
+              width="1.2"
               color="white"
               align="center">
             </a-text>
           </a-plane>
         </a-entity>
+      </a-entity>
+
+      <!-- 3D-объект (анимационная сфера) -->
+      <a-entity
+        position="4 0 0.5"
+        scale="0.5 0.5 0.5"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear">
+        <a-sphere
+          radius="0.5"
+          material="color: #FFD700; shader: standard; metalness: 0.5; roughness: 0.4">
+        </a-sphere>
       </a-entity>
 
       <!-- Освещение -->
