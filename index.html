@@ -71,7 +71,6 @@
       // Добавляем новую модель
       const model = document.createElement('a-entity');
       model.setAttribute('gltf-model', `url(${models[index]})`);
-      model.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear');
       modelEntity.appendChild(model);
       updateButtons();
     }
