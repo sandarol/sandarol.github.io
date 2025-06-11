@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AR Business Card</title>
+  <title>AR Business Card Overlay</title>
   <!-- Подключаем A-Frame -->
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-  <!-- Подключаем AR.js с улучшенным трекингом -->
+  <!-- Подключаем AR.js -->
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
   <style>
     body {
@@ -16,6 +16,23 @@
     #ar-scene {
       width: 100vw;
       height: 100vh;
+    }
+    /* Стили для кнопок и текста */
+    .social-button {
+      cursor: pointer;
+      background: linear-gradient(45deg, #6b48ff, #00ddeb);
+      border-radius: 10px;
+      padding: 10px 20px;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      margin: 5px;
+      transition: transform 0.3s;
+    }
+    .social-button:hover {
+      transform: scale(1.1);
     }
   </style>
 </head>
@@ -43,26 +60,106 @@
       smoothTolerance="0.01"
       smoothThreshold="5">
       
-      <!-- 3D-контент: анимированный текст -->
+      <!-- Основной контейнер визитки -->
       <a-entity
         position="0 0 0.1"
-        scale="1 1 1"
-        text="value: Welcome to My AR Card!; color: #FFD700; align: center; width: 5;"
-        animation="property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear">
+        scale="0.3 0.3 0.3"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear"
+        animation__appear="property: scale; from: 0 0 0; to: 0.3 0.3 0.3; dur: 1000; easing: easeOutElastic">
+        
+        <!-- Фон визитки -->
+        <a-plane
+          position="0 0 0"
+          width="4"
+          height="2.5"
+          material="color: #ffffff; opacity: 0.9; shader: flat"
+          shadow="cast: true; receive: true"
+          geometry="borderRadius: 0.2">
+        </a-plane>
+
+        <!-- Имя и профессия -->
+        <a-text
+          value="John Doe"
+          position="-1.8 0.8 0.01"
+          width="3"
+          color="#333"
+          align="left"
+          font="https://cdn.aframe.io/fonts/Exo2Bold.fnt">
+        </a-text>
+        <a-text
+          value="AR Developer | Creative Tech"
+          position="-1.8 0.5 0.01"
+          width="2.5"
+          color="#666"
+          align="left"
+          font="https://cdn.aframe.io/fonts/Exo2Bold.fnt">
+        </a-text>
+
+        <!-- Видеоролик -->
+        <a-video
+          src="https://cdn.glitch.global/8ef370bc-96e4-4e72-b2aa-d1cb3e0cf711/sample-video.mp4"
+          position="-1.2 -0.2 0.01"
+          width="1.2"
+          height="0.8"
+          autoplay="true"
+          loop="true"
+          material="shader: flat">
+        </a-video>
+
+        <!-- Кнопки соцсетей -->
+        <a-entity position="0.8 -0.2 0.01">
+          <a-text
+            value="Connect with me:"
+            position="-0.5 0.5 0"
+            width="1.5"
+            color="#333"
+            align="center"
+            font="https://cdn.aframe.io/fonts/Exo2Bold.fnt">
+          </a-text>
+          <a-plane
+            position="0 0.2 0.01"
+            width="0.8"
+            height="0.3"
+            material="color: #1DA1F2; opacity: 0.9"
+            class="social-button"
+            event-set__click="_target: window; _type: location.href='https://twitter.com/yourprofile'">
+            <a-text
+              value="Twitter"
+              position="0 0 0.01"
+              width="1"
+              color="white"
+              align="center">
+            </a-text>
+          </a-plane>
+          <a-plane
+            position="0 -0.2 0.01"
+            width="0.8"
+            height="0.3"
+            material="color: #0077B5; opacity: 0.9"
+            class="social-button"
+            event-set__click="_target: window; _type: location.href='https://linkedin.com/in/yourprofile'">
+            <a-text
+              value="LinkedIn"
+              position="0 0 0.01"
+              width="1"
+              color="white"
+              align="center">
+            </a-text>
+          </a-plane>
+        </a-entity>
       </a-entity>
 
-      <!-- Добавляем свет для лучшей видимости -->
+      <!-- Освещение -->
       <a-entity light="type: ambient; intensity: 0.5"></a-entity>
       <a-entity light="type: directional; intensity: 0.5" position="0 1 1"></a-entity>
     </a-marker>
   </a-scene>
 
   <script>
-    // Дополнительные настройки для улучшения трекинга
+    // Улучшение трекинга
     AFRAME.registerComponent('arjs-video', {
       init: function () {
         this.el.sceneEl.renderer.physicallyCorrectLights = true;
-        // Увеличиваем частоту обновления трекинга
         this.el.setAttribute('arjs', 'trackingMethod: best; sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3;');
       }
     });
