@@ -15,17 +15,16 @@
       top: 0;
       left: 0;
       width: 100%;
-      background: rgba(0, 0, 0, 0.5); /* Прозрачная шапка */
+      background: rgba(0, 0, 0, 0.5);
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 10px 0;
-      z-index: 10;
+      z-index: 20;
     }
     .header img {
-      max-height: 50px; /* Ограничение высоты логотипа */
-      width: auto;
-      max-width: 90%; /* Адаптация под узкие экраны */
+      height: 50px; /* Измените размер логотипа по необходимости */
+      max-width: 200px;
     }
     .controls {
       position: fixed;
@@ -33,12 +32,12 @@
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 15px;
+      gap: 20px;
       z-index: 10;
     }
     .controls button {
-      padding: 8px 15px;
-      font-size: 14px;
+      padding: 10px 20px;
+      font-size: 16px;
       background-color: #007bff;
       color: white;
       border: none;
@@ -58,29 +57,23 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(0, 0, 0, 0.7);
       color: white;
-      padding: 10px 20px;
-      border-radius: 5px;
-      font-size: 16px;
-      z-index: 10;
-      display: none; /* Скрыт по умолчанию */
+      font-size: 24px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 15px 30px;
+      border-radius: 10px;
+      z-index: 15;
+      display: none;
     }
-    @media (max-width: 600px) {
-      .header img {
-        max-height: 40px; /* Меньший логотип на мобильных */
-      }
-      .controls {
-        gap: 10px;
-      }
-      .controls button {
-        padding: 6px 12px;
-        font-size: 12px; /* Меньший шрифт для кнопок */
-      }
-      .loading {
-        font-size: 14px;
-        padding: 8px 15px;
-      }
+    .loading::after {
+      content: '...';
+      animation: dots 1.5s steps(5, end) infinite;
+    }
+    @keyframes dots {
+      0%, 20% { content: '.'; }
+      40% { content: '..'; }
+      60% { content: '...'; }
+      80%, 100% { content: ''; }
     }
   </style>
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
@@ -88,8 +81,9 @@
 </head>
 <body>
   <div class="header">
-    <img src="logo.jpg" alt="Company Logo">
+    <img src="logo.png" alt="Company Logo">
   </div>
+
   <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
     <a-assets>
       <!-- Предварительно определяем активы, но загружаем модель динамически -->
@@ -101,35 +95,41 @@
     </a-marker>
     <a-entity camera></a-entity>
   </a-scene>
-  <div class="loading" id="loading">Загрузка модели...</div>
+
   <div class="controls">
     <button onclick="previousModel()">←</button>
     <button onclick="nextModel()">→</button>
   </div>
 
+  <div class="loading" id="loadingIndicator">Загрузка модели</div>
+
   <script>
     // Список моделей
     const models = Array.from({ length: 9 }, (_, i) => `${i + 1}.glb`);
     let currentModelIndex = 0;
-    const loadingElement = document.getElementById('loading');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+
+    // Функция для показа/скрытия индикатора загрузки
+    function toggleLoading(show) {
+      loadingIndicator.style.display = show ? 'block' : 'none';
+    }
 
     // Функция для загрузки модели
     function loadModel(index) {
+      toggleLoading(true);
       const modelEntity = document.getElementById('model');
-      // Показываем индикатор загрузки
-      loadingElement.style.display = 'block';
       // Очищаем предыдущую модель
       modelEntity.innerHTML = '';
       // Добавляем новую модель
       const model = document.createElement('a-entity');
       model.setAttribute('gltf-model', `url(${models[index]})`);
-      // Скрываем индикатор после загрузки
+      // Слушаем событие загрузки модели
       model.addEventListener('model-loaded', () => {
-        loadingElement.style.display = 'none';
+        toggleLoading(false);
       });
-      // Показываем индикатор, если произошла ошибка
       model.addEventListener('model-error', () => {
-        loadingElement.textContent = 'Ошибка загрузки модели';
+        toggleLoading(false);
+        alert('Ошибка загрузки модели');
       });
       modelEntity.appendChild(model);
       updateButtons();
