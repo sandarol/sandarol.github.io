@@ -9,18 +9,14 @@
     #video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
     #arScene { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
     #instructions { position: absolute; top: 10px; left: 10px; color: white; background: rgba(0, 0, 0, 0.7); padding: 10px; }
-    #error { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: red; font-size: 18px; }
   </style>
 </head>
 <body>
   <div id="instructions">Наведите камеру на QR-код</div>
   <video id="video" autoplay playsinline></video>
   <canvas id="canvas" style="display: none;"></canvas>
-  <div id="error" style="display: none;">Не удалось получить доступ к камере. Проверьте разрешения и подключение.</div>
-  
   <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js"></script>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  
   <a-scene id="arScene" style="display: none;" embedded arjs="sourceType: webcam;">
     <a-marker preset="hiro">
       <a-plane width="2" height="1" color="#ffffff" material="opacity: 0.9;">
@@ -48,21 +44,15 @@
     const context = canvas.getContext('2d');
     const arScene = document.getElementById('arScene');
     const instructions = document.getElementById('instructions');
-    const errorDiv = document.getElementById('error');
 
-    // Запрос доступа к камере
     navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
       .then(stream => {
         video.srcObject = stream;
         video.play();
         requestAnimationFrame(tick);
       })
-      .catch(err => {
-        console.error('Ошибка доступа к камере: ', err);
-        errorDiv.style.display = 'block';  // Показать ошибку пользователю
-      });
+      .catch(err => console.error('Ошибка доступа к камере: ', err));
 
-    // Функция для постоянного сканирования QR-кода
     function tick() {
       if (video.readyState === video.HAVE_ENOUGH_DATA) {
         canvas.width = video.videoWidth;
