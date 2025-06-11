@@ -84,7 +84,7 @@
     <img src="logo.png" alt="Company Logo">
   </div>
 
-  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+  <a-scene embedded arjs='sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3; maxDetectionRate: 60; smoothingThreshold: 0.2; debugUIEnabled: true;'>
     <a-assets>
       <!-- Предварительно определяем активы, но загружаем модель динамически -->
     </a-assets>
