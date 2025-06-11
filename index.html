@@ -1,113 +1,91 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AR Визитка</title>
-  <style>
-    body { margin: 0; overflow: hidden; }
-    #instructions { position: absolute; top: 10px; left: 10px; color: white; background: rgba(0, 0, 0, 0.7); padding: 10px; font-family: Arial, sans-serif; }
-    #error { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: red; font-size: 18px; text-align: center; font-family: Arial, sans-serif; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Визитка</title>
+    <!-- Подключение библиотеки AR.js (Open Source) -->
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Arial', sans-serif;
+        }
+        .business-card {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-align: center;
+            animation: fadeInUp 1s ease-in-out;
+        }
+        .business-card img {
+            max-width: 80px;
+            margin-bottom: 10px;
+        }
+        .business-card h1 {
+            margin: 10px 0;
+            font-size: 1.5em;
+            color: #333;
+        }
+        .social-links a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #555;
+            font-size: 1.2em;
+            transition: color 0.3s;
+        }
+        .social-links a:hover {
+            color: #000;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 20px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+    </style>
 </head>
 <body>
-  <div id="instructions">Наведи камеру на метку Hiro</div>
-  <div id="error" style="display: none;">Ошибка: не удалось получить доступ к камере или распознать метку. Проверь разрешения и освещение.</div>
 
-  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <!-- A-Frame AR.js сцена -->
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+        <!-- Отслеживание маркера (деформированный, бликовый и при плохом освещении) -->
+        <!-- Для большей надежности используем NFT маркер -->
+        <a-nft type="nft" url="/nft/marker" smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5">
+            <!-- 3D-модель или элементы можно разместить здесь -->
+            <a-plane color="white" width="1" height="0.5" position="0 0 0"></a-plane>
+        </a-nft>
 
-  <a-scene
-    embedded
-    arjs="sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3; debugUIEnabled: false; sourceWidth: 1280; sourceHeight: 720;"
-    renderer="logarithmicDepthBuffer: true;"
-  >
-    <a-marker preset="hiro">
-      <a-entity position="0 0 0" rotation="0 0 0">
-        <a-plane width="2.2" height="1.2" color="#ffffff" material="opacity: 0.95; side: double;">
-          <a-animation attribute="rotation" from="0 0 0" to="0 360 0" dur="10000" repeat="indefinite" easing="linear"></a-animation>
-          <a-animation attribute="position" from="0 0 0" to="0 0.1 0" dur="2000" direction="alternate" repeat="indefinite" easing="ease-in-out"></a-animation>
-          <a-text value="Моя Визитка" position="0 0.45 0.01" align="center" color="#000000" scale="0.7 0.7 0.7" font="roboto"></a-text>
-          <a-text value="Привет! Я [Твоё Имя]" position="0 0.25 0.01" align="center" color="#000000" scale="0.4 0.4 0.4" font="roboto"></a-text>
-          
-          <!-- Кнопка Facebook -->
-          <a-entity position="-0.75 -0.35 0.01" cursor-listener>
-            <a-plane width="0.5" height="0.5" color="#4267B2">
-              <a-text value="FB" align="center" color="white" scale="0.4 0.4 0.4" font="roboto"></a-text>
-            </a-plane>
-          </a-entity>
-          
-          <!-- Кнопка Twitter -->
-          <a-entity position="0 -0.35 0.01" cursor-listener>
-            <a-plane width="0.5" height="0.5" color="#1DA1F2">
-              <a-text value="TW" align="center" color="white" scale="0.4 0.4 0.4" font="roboto"></a-text>
-            </a-plane>
-          </a-entity>
-          
-          <!-- Кнопка Instagram -->
-          <a-entity position="0.75 -0.35 0.01" cursor-listener>
-            <a-plane width="0.5" height="0.5" color="#E1306C">
-              <a-text value="IG" align="center" color="white" scale="0.4 0.4 0.4" font="roboto"></a-text>
-            </a-plane>
-          </a-entity>
-        </a-plane>
-      </a-entity>
-    </a-marker>
-    <a-entity camera></a-entity>
-  </a-scene>
+        <!-- Камера -->
+        <a-entity camera></a-entity>
+    </a-scene>
 
-  <script>
-    // Компонент для обработки кликов и анимации наведения
-    AFRAME.registerComponent('cursor-listener', {
-      init: function () {
-        this.el.addEventListener('click', () => {
-          const position = this.el.getAttribute('position');
-          if (position.x === -0.75) window.open('https://facebook.com', '_blank');
-          if (position.x === 0) window.open('https://twitter.com', '_blank');
-          if (position.x === 0.75) window.open('https://instagram.com', '_blank');
-        });
-        this.el.addEventListener('mouseenter', () => {
-          this.el.setAttribute('scale', '1.1 1.1 1.1');
-        });
-        this.el.addEventListener('mouseleave', () => {
-          this.el.setAttribute('scale', '1 1 1');
-        });
-      }
-    });
+    <!-- Визитка поверх видео -->
+    <div class="business-card">
+        <img src="logo.png" alt="Логотип">
+        <h1>Имя Фамилия</h1>
+        <p>Должность / Компания</p>
+        <div class="social-links">
+            <a href="https://t.me/yourprofile" target="_blank">Telegram</a>
+            <a href="https://www.instagram.com/yourprofile" target="_blank">Instagram</a>
+            <a href="https://linkedin.com/in/yourprofile" target="_blank">LinkedIn</a>
+        </div>
+    </div>
 
-    const instructions = document.getElementById('instructions');
-    const errorDiv = document.getElementById('error');
-    const scene = document.querySelector('a-scene');
-
-    // Проверка загрузки сцены
-    scene.addEventListener('loaded', () => {
-      console.log('Сцена загружена');
-    });
-
-    // Проверка доступа к камере
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-      .then(stream => {
-        console.log('Камера работает');
-      })
-      .catch(err => {
-        console.error('Ошибка камеры: ', err);
-        instructions.style.display = 'none';
-        errorDiv.style.display = 'block';
-      });
-
-    // Скрытие инструкций при распознавании метки
-    scene.addEventListener('markerFound', () => {
-      instructions.style.display = 'none';
-      errorDiv.style.display = 'none';
-    });
-
-    // Показ инструкций, если метка потеряна
-    scene.addEventListener('markerLost', () => {
-      instructions.style.display = 'block';
-    });
-  </script>
 </body>
 </html>
+
 
 
 <!--
