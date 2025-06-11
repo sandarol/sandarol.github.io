@@ -2,152 +2,157 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>AR Business Card Overlay</title>
-  <!-- Подключаем A-Frame -->
-  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-  <!-- Подключаем AR.js -->
-  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AR Business Card</title>
   <style>
     body {
       margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       overflow: hidden;
+      background: #000;
     }
-    #ar-scene {
-      width: 100vw;
-      height: 100vh;
+    .button-container {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      z-index: 1000;
+    }
+    .arrow-button {
+      width: 50px;
+      height: 50px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      color: #fff;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+    }
+    .arrow-button:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-color: #007bff;
+      transform: scale(1.1);
+    }
+    .arrow-button:active {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: scale(0.95);
+    }
+    .arrow-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .loading-overlay {
       position: fixed;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      z-index: 2000;
+      display: none;
     }
   </style>
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-ar@0.4.1/dist/aframe-ar.min.js"></script>
 </head>
 <body>
-  <!-- A-Frame сцена -->
+  <div class="loading-overlay" id="loading">Loading model...</div>
   <a-scene
-    vr-mode-ui="enabled: false"
-    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3; sourceWidth: 1280; sourceHeight: 720; displayWidth: 1280; displayHeight: 720;"
     embedded
-    id="ar-scene"
-    renderer="antialias: true; logarithmicDepthBuffer: true;">
-    
-    <!-- Камера -->
-    <a-camera
-      position="0 0 0"
-      look-controls="enabled: false"
-      wasd-controls="enabled: false">
-    </a-camera>
-
-    <!-- Маркер Hiro -->
-    <a-marker
-      type="pattern"
-      preset="hiro"
-      smooth="true"
-      smoothCount="10"
-      smoothTolerance="0.01"
-      smoothThreshold="5">
-      
-      <!-- Основной контейнер визитки -->
-      <a-entity
-        position="0 0 0"
-        scale="0.5 0.5 0.5"
-        rotation="-90 0 0"
-        animation__appear="property: scale; from: 0 0 0; to: 0.5 0.5 0.5; dur: 1000; easing: easeOutElastic">
-        
-        <!-- Фон визитки -->
-        <a-plane
-          position="0 0 0"
-          width="6"
-          height="3.5"
-          material="color: #ffffff; opacity: 0; shader: flat"
-          shadow="cast: true; receive: true"
-          geometry="borderRadius: 0.2">
-        </a-plane>
-
-        <!-- Имя и профессия -->
-        <a-text
-          value="John Doe"
-          position="-2.8 1.2 0.01"
-          width="4"
-          color="#333"
-          align="left"
-          font="roboto"
-          anchor="left"
-          baseline="top">
-        </a-text>
-        <a-text
-          value="AR Developer | Creative Tech"
-          position="-2.8 0.8 0.01"
-          width="3.5"
-          color="#666"
-          align="left"
-          font="roboto"
-          anchor="left"
-          baseline="top">
-        </a-text>
-
-        <!-- Фотографии -->
-        <a-image
-          src="1p.png"
-          position="-1.8 -0.3 0.01"
-          width="1.2"
-          height="0.8"
-          material="shader: flat">
-        </a-image>
-        <a-image
-          src="2p.png"
-          position="-0.3 -0.3 0.01"
-          width="1.2"
-          height="0.8"
-          material="shader: flat">
-        </a-image>
-        <a-image
-          src="3p.png"
-          position="1.2 -0.3 0.01"
-          width="1.2"
-          height="0.8"
-          material="shader: flat">
-        </a-image>
+    arjs="sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3; debugUIEnabled: false;"
+    renderer="antialias: true; alpha: true;">
+    <a-marker preset="hiro">
+      <a-entity id="model" scale="0.3 0.3 0.3" position="0 0 0">
+        <a-entity
+          id="model-entity"
+          gltf-model="url(1.glb)"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear">
+        </a-entity>
       </a-entity>
-
-      <!-- 3D-объект (glTF-модель) -->
-      <a-entity
-        position="0 0 5"
-        scale="0.5 0.5 0.5"
-        rotation="0 0 0"
-        gltf-model="h.glb"
-        animation="property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear">
-      </a-entity>
-
-      <!-- Освещение -->
-      <a-entity light="type: ambient; intensity: 0.5"></a-entity>
-      <a-entity light="type: directional; intensity: 0.5" position="0 1 1"></a-entity>
     </a-marker>
+    <a-entity camera></a-entity>
   </a-scene>
 
-  <script>
-    // Улучшение трекинга и мобильной совместимости
-    AFRAME.registerComponent('arjs-video', {
-      init: function () {
-        this.el.sceneEl.renderer.physicallyCorrectLights = true;
-        this.el.setAttribute('arjs', 'trackingMethod: best; sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3; sourceWidth: 1280; sourceHeight: 720; displayWidth: 1280; displayHeight: 720;');
-        // Запрашиваем доступ к камере
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-          .then(stream => {
-            console.log('Camera access granted');
-          })
-          .catch(err => {
-            console.error('Camera access denied:', err);
-            alert('Please allow camera access to use AR.');
-          });
-      }
-    });
+  <div class="button-container">
+    <button class="arrow-button" onclick="switchModel('prev')">&#9664;</button>
+    <button class="arrow-button" onclick="switchModel('next')">&#9654;</button>
+  </div>
 
-    // Обработка изменения ориентации экрана
-    window.addEventListener('resize', () => {
-      const scene = document.querySelector('a-scene');
-      scene.resize();
-    });
+  <script>
+    const TOTAL_MODELS = 9;
+    let currentModel = 1;
+    const modelCache = new Map();
+
+    function showLoading(show) {
+      document.getElementById('loading').style.display = show ? 'flex' : 'none';
+    }
+
+    async function preloadModel(modelNumber) {
+      if (!modelCache.has(modelNumber)) {
+        showLoading(true);
+        const modelUrl = `${modelNumber}.glb`;
+        try {
+          // Preload model by creating a temporary entity
+          const tempEntity = document.createElement('a-entity');
+          tempEntity.setAttribute('gltf-model', `url(${modelUrl})`);
+          tempEntity.addEventListener('model-loaded', () => {
+            modelCache.set(modelNumber, modelUrl);
+            showLoading(false);
+          });
+          tempEntity.addEventListener('model-error', () => {
+            console.error(`Failed to load model ${modelNumber}`);
+            showLoading(false);
+          });
+          document.querySelector('a-scene').appendChild(tempEntity);
+          // Remove temporary entity after loading
+          setTimeout(() => tempEntity.remove(), 100);
+        } catch (error) {
+          console.error('Preload error:', error);
+          showLoading(false);
+        }
+      }
+    }
+
+    function switchModel(direction) {
+      const newModel = direction === 'next'
+        ? (currentModel % TOTAL_MODELS) + 1
+        : currentModel === 1 ? TOTAL_MODELS : currentModel - 1;
+
+      showLoading(true);
+      const modelEntity = document.getElementById('model-entity');
+      modelEntity.setAttribute('gltf-model', `url(${newModel}.glb)`);
+
+      modelEntity.addEventListener('model-loaded', () => {
+        showLoading(false);
+        currentModel = newModel;
+        // Preload next model to reduce lag
+        preloadModel((newModel % TOTAL_MODELS) + 1);
+      }, { once: true });
+
+      modelEntity.addEventListener('model-error', () => {
+        console.error(`Failed to load model ${newModel}`);
+        showLoading(false);
+      }, { once: true });
+    }
+
+    // Preload first model and next one
+    window.onload = () => {
+      preloadModel(1);
+      preloadModel(2);
+    };
   </script>
 </body>
 </html>
