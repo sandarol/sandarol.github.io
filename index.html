@@ -1,22 +1,84 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AR Визитка</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    #video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    #arScene { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    #instructions { position: absolute; top: 10px; left: 10px; color: white; background: rgba(0, 0, 0, 0.7); padding: 10px; }
+    #error { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: red; font-size: 18px; }
+  </style>
 </head>
-<body style="margin: 0; overflow: hidden;">
-    <a-scene 
-  embedded arjs="sourceType: webcam; debugUIEnabled: false; 
-  detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
->
-        <a-entity 
-  gltf-model="url(model.glb)"
-  scale="1 1 1"
-  position="0 0 0"  
-  rotation="0 0 0"
-></a-entity>
-        <a-marker-camera preset="hiro"></a-marker-camera>
-    </a-scene>
+<body>
+  <div id="instructions">Наведите камеру на QR-код</div>
+  <video id="video" autoplay playsinline></video>
+  <canvas id="canvas" style="display: none;"></canvas>
+  <div id="error" style="display: none;">Не удалось получить доступ к камере. Проверьте разрешения и подключение.</div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js"></script>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  
+  <a-scene id="arScene" style="display: none;" embedded arjs="sourceType: webcam;">
+    <a-marker preset="hiro">
+      <a-plane width="2" height="1" color="#ffffff" material="opacity: 0.9;">
+        <a-animation attribute="rotation" to="0 360 0" dur="5000" repeat="indefinite"></a-animation>
+        <a-text value="Моя Визитка" position="0 0.4 0" align="center" color="black" scale="0.5 0.5 0.5"></a-text>
+        <a-text value="Привет! Я [Ваше Имя]" position="0 0.2 0" align="center" color="black" scale="0.3 0.3 0.3"></a-text>
+        <a-entity position="-0.5 -0.3 0">
+          <a-plane width="0.5" height="0.5" color="#4267B2" class="clickable" onclick="window.open('https://facebook.com', '_blank')">
+            <a-text value="FB" align="center" color="white" scale="0.4 0.4 0.4"></a-text>
+          </a-plane>
+        </a-entity>
+        <a-entity position="0.5 -0.3 0">
+          <a-plane width="0.5" height="0.5" color="#1DA1F2" class="clickable" onclick="window.open('https://twitter.com', '_blank')">
+            <a-text value="TW" align="center" color="white" scale="0.4 0.4 0.4"></a-text>
+          </a-plane>
+        </a-entity>
+      </a-plane>
+    </a-marker>
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    const arScene = document.getElementById('arScene');
+    const instructions = document.getElementById('instructions');
+    const errorDiv = document.getElementById('error');
+
+    // Запрос доступа к камере
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      .then(stream => {
+        video.srcObject = stream;
+        video.play();
+        requestAnimationFrame(tick);
+      })
+      .catch(err => {
+        console.error('Ошибка доступа к камере: ', err);
+        errorDiv.style.display = 'block';  // Показать ошибку пользователю
+      });
+
+    // Функция для постоянного сканирования QR-кода
+    function tick() {
+      if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        if (code) {
+          video.style.display = 'none';
+          instructions.style.display = 'none';
+          arScene.style.display = 'block';
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+  </script>
 </body>
 </html>
 
