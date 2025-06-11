@@ -33,7 +33,7 @@
     
     <!-- Камера -->
     <a-camera
-      position="-90 0 0"
+      position="0 0 0"
       look-controls="enabled: false"
       wasd-controls="enabled: false">
     </a-camera>
@@ -51,9 +51,40 @@
       <a-entity
         position="0 0 0.01"
         scale="0.5 0.5 0.5"
-        rotation="0 0 0"
+        rotation="-90 0 0"
         animation__appear="property: scale; from: 0 0 0; to: 0.5 0.5 0.5; dur: 1000; easing: easeOutElastic">
         
+        <!-- Фон визитки -->
+        <a-plane
+          position="0 0 0"
+          width="6"
+          height="3.5"
+          material="color: #ffffff; opacity: 0.5; shader: flat"
+          shadow="cast: true; receive: true"
+          geometry="borderRadius: 0.2">
+        </a-plane>
+
+        <!-- Имя и профессия -->
+        <a-text
+          value="John Doe"
+          position="-2.8 1.2 0.01"
+          width="4"
+          color="#333"
+          align="left"
+          font="roboto"
+          anchor="left"
+          baseline="top">
+        </a-text>
+        <a-text
+          value="AR Developer | Creative Tech"
+          position="-2.8 0.8 0.01"
+          width="3.5"
+          color="#666"
+          align="left"
+          font="roboto"
+          anchor="left"
+          baseline="top">
+        </a-text>
 
         <!-- Фотографии -->
         <a-image
@@ -83,7 +114,7 @@
       <a-entity
         position="0 0 0.5"
         scale="0.5 0.5 0.5"
-        rotation="90 0 0"
+        rotation="0 0 0"
         gltf-model="h.glb"
         animation="property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear">
       </a-entity>
