@@ -20,20 +20,6 @@
       top: 0;
       left: 0;
     }
-    /* Стили для кнопок и текста */
-    .social-button {
-      cursor: pointer;
-      background: linear-gradient(45deg, #6b48ff, #00ddeb);
-      border-radius: 10px;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      text-decoration: none;
-      transition: transform 0.3s;
-    }
-    .social-button:hover {
-      transform: scale(1.1);
-    }
   </style>
 </head>
 <body>
@@ -64,8 +50,8 @@
       <!-- Основной контейнер визитки -->
       <a-entity
         position="0 0 0.01"
-        scale="1 1 1"
-        rotation="-90 0 0"
+        scale="0.5 0.5 0.5"
+        rotation="0 0 0"
         animation__appear="property: scale; from: 0 0 0; to: 0.5 0.5 0.5; dur: 1000; easing: easeOutElastic">
         
         <!-- Фон визитки -->
@@ -85,7 +71,9 @@
           width="4"
           color="#333"
           align="left"
-          font="https://cdn.aframe.io/fonts/Exo2Bold.fnt">
+          font="roboto"
+          anchor="left"
+          baseline="top">
         </a-text>
         <a-text
           value="AR Developer | Creative Tech"
@@ -93,69 +81,42 @@
           width="3.5"
           color="#666"
           align="left"
-          font="https://cdn.aframe.io/fonts/Exo2Bold.fnt">
+          font="roboto"
+          anchor="left"
+          baseline="top">
         </a-text>
 
-        <!-- Видеоролик -->
-        <a-video
-          src="https://cdn.glitch.global/8ef370bc-96e4-4e72-b2aa-d1cb3e0cf711/sample-video.mp4"
+        <!-- Фотографии -->
+        <a-image
+          src="1p.png"
           position="-1.8 -0.3 0.01"
-          width="1.8"
-          height="1.2"
-          autoplay="true"
-          loop="true"
+          width="1.2"
+          height="0.8"
           material="shader: flat">
-        </a-video>
-
-        <!-- Кнопки соцсетей на визитке -->
-        <a-entity position="1.5 -0.9 0.01">
-          <a-plane
-            position="-0.6 0 0.01"
-            width="1"
-            height="0.4"
-            material="color: #1DA1F2; opacity: 0.9"
-            class="social-button"
-            cursor="rayOrigin: mouse"
-            raycaster="objects: .social-button"
-            link="href: https://twitter.com/yourprofile">
-            <a-text
-              value="Twitter"
-              position="0 0 0.01"
-              width="1.2"
-              color="white"
-              align="center">
-            </a-text>
-          </a-plane>
-          <a-plane
-            position="0.6 0 0.01"
-            width="1"
-            height="0.4"
-            material="color: #0077B5; opacity: 0.9"
-            class="social-button"
-            cursor="rayOrigin: mouse"
-            raycaster="objects: .social-button"
-            link="href: https://linkedin.com/in/yourprofile">
-            <a-text
-              value="LinkedIn"
-              position="0 0 0.01"
-              width="1.2"
-              color="white"
-              align="center">
-            </a-text>
-          </a-plane>
-        </a-entity>
+        </a-image>
+        <a-image
+          src="2p.png"
+          position="-0.3 -0.3 0.01"
+          width="1.2"
+          height="0.8"
+          material="shader: flat">
+        </a-image>
+        <a-image
+          src="3p.png"
+          position="1.2 -0.3 0.01"
+          width="1.2"
+          height="0.8"
+          material="shader: flat">
+        </a-image>
       </a-entity>
 
-      <!-- 3D-объект (анимационная сфера) -->
+      <!-- 3D-объект (glTF-модель) -->
       <a-entity
-        position="4 0 0.5"
+        position="0 0 0.5"
         scale="0.5 0.5 0.5"
-        rotation="90 0 0"
-        animation="property: rotation; to: 90 360 0; loop: true; dur: 5000; easing: linear">
-        <a-sphere
-          radius="0.5"
-          material="color: #FFD700; shader: standard; metalness: 0.5; roughness: 0.4">
-        </a-sphere>
+        rotation="0 0 0"
+        gltf-model="h.glb"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear">
       </a-entity>
 
       <!-- Освещение -->
@@ -186,18 +147,6 @@
     window.addEventListener('resize', () => {
       const scene = document.querySelector('a-scene');
       scene.resize();
-    });
-
-    // Регистрация компонента для обработки кликов
-    AFRAME.registerComponent('link', {
-      schema: {
-        href: { type: 'string' }
-      },
-      init: function () {
-        this.el.addEventListener('click', () => {
-          window.location.href = this.data.href;
-        });
-      }
     });
   </script>
 </body>
