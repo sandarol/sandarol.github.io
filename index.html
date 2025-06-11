@@ -2,54 +2,64 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>AR Визитка (Pattern Marker)</title>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
-  <style>
-    body, html {margin:0; overflow:hidden; width:100%; height:100%;}
-    .arjs-loader {
-      position:absolute;
-      top:0; left:0;
-      width:100%; height:100%;
-      background:rgba(0,0,0,0.8);
-      display:flex; align-items:center; justify-content:center;
-      color:white; z-index:999;
-      font-size:1.2em;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AR Визитка</title>
+  <!-- Подключаем A-Frame -->
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <!-- Подключаем AR.js -->
+  <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/AR.js@2.2.2/aframe/build/aframe-ar.min.js"></script>
 </head>
 <body>
-  <div class="arjs-loader"><div>Загрузка AR...</div></div>
-
-  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-    <!-- Используем .patt -->
-    <a-marker type="pattern" url="marker.patt">
-      <!-- Визитка -->
-      <a-plane position="0 0 0" rotation="-90 0 0" width="1.5" height="1" color="#222" opacity="0.85"></a-plane>
-      <a-text value="Иван Иванов" align="center" color="#fff"
-              position="0 0.3 0.01" width="2"></a-text>
-      <a-text value="Twitter" align="center" color="#1da1f2"
-              position="0 0.1 0.01" width="2"
-              event-set__enter="_event: mouseenter; scale: 1.2 1.2 1.2"
-              event-set__leave="_event: mouseleave; scale: 1 1 1"
-              onclick="window.open('https://twitter.com/yourprofile', '_blank')">
-      </a-text>
-      <a-text value="LinkedIn" align="center" color="#0077b5"
-              position="0 -0.1 0.01" width="2"
-              event-set__enter="_event: mouseenter; scale: 1.2 1.2 1.2"
-              event-set__leave="_event: mouseleave; scale: 1 1 1"
-              onclick="window.open('https://linkedin.com/in/yourprofile', '_blank')">
-      </a-text>
+  <!-- Сцена A-Frame -->
+  <a-scene
+    vr-mode-ui="enabled: false"
+    arjs="sourceType: webcam; debugUIEnabled: false; sourceWidth: 1280; sourceHeight: 720; displayWidth: 1280; displayHeight: 720;"
+    embedded>
+    
+    <!-- Маркер на основе изображения (логотип компании) -->
+    <a-marker
+      type="pattern"
+      url="marker.patt"
+      preset="custom">
+      
+      <!-- Визитка: плоскость с фоном и текст -->
+      <a-plane
+        position="0 0 0"
+        width="1.5"
+        height="0.9"
+        material="color: #ffffff; opacity: 0.9"
+        rotation="-90 0 0">
+        <!-- Текст визитки -->
+        <a-text
+          value="Ваше Имя\nКомпания: Ваша Компания\nДолжность: Генеральный директор\nТелефон: +7 123 456 7890\nEmail: example@company.com"
+          color="black"
+          align="center"
+          width="1.4"
+          position="0 0 0.01"
+          font="mozillavr"></a-text>
+      </a-plane>
+      
+      <!-- Дополнительный 3D-текст над визиткой для эффекта -->
+      <a-text
+        value="AR Визитка"
+        color="red"
+        position="0 0.2 0.5"
+        rotation="-90 0 0"
+        scale="0.3 0.3 0.3"
+        font="mozillavr"></a-text>
     </a-marker>
 
+    <!-- Камера -->
     <a-entity camera></a-entity>
   </a-scene>
 
-  <script>
-    document.querySelector('.arjs-loader').style.display = 'none';
-  </script>
+  <!-- Инструкция для пользователя -->
+  <div style="position: fixed; top: 10px; left: 10px; color: white; background: rgba(0,0,0,0.7); padding: 10px;">
+    Наведите камеру на логотип вашей компании.
+  </div>
 </body>
 </html>
+
 
 
 
