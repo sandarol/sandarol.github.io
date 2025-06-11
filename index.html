@@ -64,21 +64,46 @@
       z-index: 2000;
       display: none;
     }
+    .error-message {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 0, 0, 0.8);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      z-index: 2000;
+      display: none;
+    }
   </style>
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
   <script src="https://unpkg.com/aframe-ar@0.4.1/dist/aframe-ar.min.js"></script>
+  <script src="https://unpkg.com/three@0.160.0/examples/jsm/loaders/DRACOLoader.js"></script>
 </head>
 <body>
   <div class="loading-overlay" id="loading">Loading model...</div>
+  <div class="error-message" id="error">Failed to load model</div>
   <a-scene
     embedded
     arjs="sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3; debugUIEnabled: false;"
     renderer="antialias: true; alpha: true;">
+    <a-assets timeout="60000">
+      <a-asset-item id="model1" src="1.glb"></a-asset-item>
+      <a-asset-item id="model2" src="2.glb"></a-asset-item>
+      <a-asset-item id="model3" src="3.glb"></a-asset-item>
+      <a-asset-item id="model4" src="4.glb"></a-asset-item>
+      <a-asset-item id="model5" src="5.glb"></a-asset-item>
+      <a-asset-item id="model6" src="6.glb"></a-asset-item>
+      <a-asset-item id="model7" src="7.glb"></a-asset-item>
+      <a-asset-item id="model8" src="8.glb"></a-asset-item>
+      <a-asset-item id="model9" src="9.glb"></a-asset-item>
+    </a-assets>
     <a-marker preset="hiro">
       <a-entity id="model" scale="0.3 0.3 0.3" position="0 0 0">
         <a-entity
           id="model-entity"
-          gltf-model="url(1.glb)"
+          gltf-model="#model1"
           animation="property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear">
         </a-entity>
       </a-entity>
@@ -87,43 +112,33 @@
   </a-scene>
 
   <div class="button-container">
-    <button class="arrow-button" onclick="switchModel('prev')">&#9664;</button>
-    <button class="arrow-button" onclick="switchModel('next')">&#9654;</button>
+    <button class="arrow-button" onclick="switchModel('prev')">◀</button>
+    <button class="arrow-button" onclick="switchModel('next')">▶</button>
   </div>
 
   <script>
     const TOTAL_MODELS = 9;
     let currentModel = 1;
-    const modelCache = new Map();
+
+    // Configure DRACO loader
+    AFRAME.registerSystem('gltf-model', {
+      init: function () {
+        this.dracoLoader = new THREE.DRACOLoader();
+        this.dracoLoader.setDecoderPath('https://unpkg.com/three@0.160.0/examples/jsm/libs/draco/');
+        this.dracoLoader.setDecoderConfig({ type: 'js' });
+      },
+      getDRACOLoader: function () {
+        return this.dracoLoader;
+      }
+    });
 
     function showLoading(show) {
       document.getElementById('loading').style.display = show ? 'flex' : 'none';
     }
 
-    async function preloadModel(modelNumber) {
-      if (!modelCache.has(modelNumber)) {
-        showLoading(true);
-        const modelUrl = `${modelNumber}.glb`;
-        try {
-          // Preload model by creating a temporary entity
-          const tempEntity = document.createElement('a-entity');
-          tempEntity.setAttribute('gltf-model', `url(${modelUrl})`);
-          tempEntity.addEventListener('model-loaded', () => {
-            modelCache.set(modelNumber, modelUrl);
-            showLoading(false);
-          });
-          tempEntity.addEventListener('model-error', () => {
-            console.error(`Failed to load model ${modelNumber}`);
-            showLoading(false);
-          });
-          document.querySelector('a-scene').appendChild(tempEntity);
-          // Remove temporary entity after loading
-          setTimeout(() => tempEntity.remove(), 100);
-        } catch (error) {
-          console.error('Preload error:', error);
-          showLoading(false);
-        }
-      }
+    function showError(show) {
+      document.getElementById('error').style.display = show ? 'block' : 'none';
+      if (show) setTimeout(() => showError(false), 3000);
     }
 
     function switchModel(direction) {
@@ -133,25 +148,30 @@
 
       showLoading(true);
       const modelEntity = document.getElementById('model-entity');
-      modelEntity.setAttribute('gltf-model', `url(${newModel}.glb)`);
+      modelEntity.setAttribute('gltf-model', `#model${newModel}`);
 
       modelEntity.addEventListener('model-loaded', () => {
         showLoading(false);
         currentModel = newModel;
-        // Preload next model to reduce lag
-        preloadModel((newModel % TOTAL_MODELS) + 1);
       }, { once: true });
 
       modelEntity.addEventListener('model-error', () => {
         console.error(`Failed to load model ${newModel}`);
         showLoading(false);
+        showError(true);
       }, { once: true });
     }
 
-    // Preload first model and next one
+    // Preload first model
     window.onload = () => {
-      preloadModel(1);
-      preloadModel(2);
+      showLoading(true);
+      const modelEntity = document.getElementById('model-entity');
+      modelEntity.addEventListener('model-loaded', () => showLoading(false), { once: true });
+      modelEntity.addEventListener('model-error', () => {
+        console.error('Failed to load initial model');
+        showLoading(false);
+        showError(true);
+      }, { once: true });
     };
   </script>
 </body>
