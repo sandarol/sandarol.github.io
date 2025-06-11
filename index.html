@@ -6,23 +6,27 @@
   <title>AR Визитка</title>
   <style>
     body { margin: 0; overflow: hidden; }
-    #video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-    #arScene { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
     #instructions { position: absolute; top: 10px; left: 10px; color: white; background: rgba(0, 0, 0, 0.7); padding: 10px; }
+    #error { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: red; font-size: 18px; text-align: center; }
   </style>
 </head>
 <body>
-  <div id="instructions">Наведите камеру на QR-код</div>
-  <video id="video" autoplay playsinline></video>
-  <canvas id="canvas" style="display: none;"></canvas>
-  <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js"></script>
+  <div id="instructions">Наведи камеру на метку Hiro</div>
+  <div id="error" style="display: none;">Ошибка: не удалось получить доступ к камере или распознать метку. Проверь разрешения и освещение.</div>
+
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <a-scene id="arScene" style="display: none;" embedded arjs="sourceType: webcam;">
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+  <a-scene
+    embedded
+    arjs="sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3; debugUIEnabled: false;"
+    renderer="logarithmicDepthBuffer: true;"
+  >
     <a-marker preset="hiro">
       <a-plane width="2" height="1" color="#ffffff" material="opacity: 0.9;">
         <a-animation attribute="rotation" to="0 360 0" dur="5000" repeat="indefinite"></a-animation>
         <a-text value="Моя Визитка" position="0 0.4 0" align="center" color="black" scale="0.5 0.5 0.5"></a-text>
-        <a-text value="Привет! Я [Ваше Имя]" position="0 0.2 0" align="center" color="black" scale="0.3 0.3 0.3"></a-text>
+        <a-text value="Привет! Я [Твое Имя]" position="0 0.2 0" align="center" color="black" scale="0.3 0.3 0.3"></a-text>
         <a-entity position="-0.5 -0.3 0">
           <a-plane width="0.5" height="0.5" color="#4267B2" class="clickable" onclick="window.open('https://facebook.com', '_blank')">
             <a-text value="FB" align="center" color="white" scale="0.4 0.4 0.4"></a-text>
@@ -39,35 +43,31 @@
   </a-scene>
 
   <script>
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const context = canvas.getContext('2d');
-    const arScene = document.getElementById('arScene');
     const instructions = document.getElementById('instructions');
+    const errorDiv = document.getElementById('error');
+    const scene = document.querySelector('a-scene');
 
+    // Проверка доступа к камере
     navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
       .then(stream => {
-        video.srcObject = stream;
-        video.play();
-        requestAnimationFrame(tick);
+        console.log('Камера работает');
       })
-      .catch(err => console.error('Ошибка доступа к камере: ', err));
+      .catch(err => {
+        console.error('Ошибка камеры: ', err);
+        instructions.style.display = 'none';
+        errorDiv.style.display = 'block';
+      });
 
-    function tick() {
-      if (video.readyState === video.HAVE_ENOUGH_DATA) {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-        const code = jsQR(imageData.data, imageData.width, imageData.height);
-        if (code) {
-          video.style.display = 'none';
-          instructions.style.display = 'none';
-          arScene.style.display = 'block';
-        }
-      }
-      requestAnimationFrame(tick);
-    }
+    // Скрытие инструкций при распознавании метки
+    scene.addEventListener('markerFound', () => {
+      instructions.style.display = 'none';
+      errorDiv.style.display = 'none';
+    });
+
+    // Показ инструкций, если метка потеряна
+    scene.addEventListener('markerLost', () => {
+      instructions.style.display = 'block';
+    });
   </script>
 </body>
 </html>
