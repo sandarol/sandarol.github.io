@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AVRA — революционные AR/VR-решения для малого и среднего бизнеса из России, готовые покорить глобальный рынок." />
+  <meta name="keywords" content="AR, VR, дополненная реальность, виртуальная реальность, бизнес, инвестиции, инновации" />
+  <title>AVRA — Будущее начинается здесь</title>
+  <link href="https://fonts.googleapis.com/css2?family=Neuropol:wght@700&family=Exo+2:wght@400&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Exo 2', sans-serif;
+      background: #0a0f1a;
+      color: #c0d8ff;
+      overflow-x: hidden;
+      line-height: 1.6;
+      margin: 0;
+      height: 100vh;
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+      position: relative;
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    body.modal-open .main-content {
+      filter: blur(2px) brightness(0.7);
+    }
+
+    body.modal-open .main-content::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(0, 234, 255, 0.1) 0%, rgba(10, 15, 26, 0.8) 70%);
+      animation: glitchOverlay 2s infinite;
+      z-index: 1001;
+    }
+
+    @keyframes glitchOverlay {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(2px, -2px); }
+      60% { transform: translate(-2px, 0); }
+      80% { transform: translate(2px, 2px); }
+      100% { transform: translate(0); }
+    }
+
+    .main-content {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+    }
+
+    canvas#bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+    }
+
+    #preloader {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      background: #0a0f1a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      transition: opacity 1s ease;
+    }
+
+    #preloader h1 {
+      color: #00eaff;
+      font-family: 'Neuropol', sans-serif;
+      font-size: 3rem;
+      text-shadow: 0 0 20px #00eaff;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+
+    .progress-bar {
+      width: 50%;
+      height: 8px;
+      background: #1a2a3a;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: #00eaff;
+      animation: load 5s forwards;
+    }
+
+    @keyframes load {
+      to { width: 100%; }
+    }
+
+    header {
+      padding: 2rem 5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+      height: 6rem;
+    }
+
+    .logo img {
+        margin-top: 10rem;
+      height: 10rem;
+      filter: drop-shadow(0 0 10px #00eaff) drop-shadow(0 0 20px #00eaff);
+      animation: logoGlow 2s infinite alternate;
+      max-width: 100%;
+      object-fit: contain;
+    }
+
+    @keyframes logoGlow {
+      0% { filter: drop-shadow(0 0 10px #00eaff) drop-shadow(0 0 20px #00eaff); }
+      100% { filter: drop-shadow(0 0 15px #00eaff) drop-shadow(0 0 30px #00eaff); }
+    }
+
+    .section {
+      min-height: 100vh;
+      padding: 10vh 5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      scroll-snap-align: start;
+    }
+
+    .section h1, .section h2 {
+      font-family: 'Neuropol', sans-serif;
+      font-size: 3.5rem;
+      color: #00eaff;
+      text-shadow: 0 0 15px #00eaff;
+      margin-bottom: 1.5rem;
+      animation: glitch 3s infinite;
+    }
+
+    @keyframes glitch {
+      10% { transform: translate(-1px, 1px); }
+      20% { transform: translate(1px, -1px); }
+      30% { transform: translate(0); }
+      40% { transform: translate(-1px, 0); }
+      50% { transform: translate(0, 1px); }
+      100% { transform: translate(0); }
+    }
+
+    .section p, .section ul {
+      font-size: 1.3rem;
+      max-width: 900px;
+      margin: 0 auto 1.5rem;
+      color: #c0d8ff;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .solution-card {
+      background: linear-gradient(135deg, #1a2a3a, #0a1a2a);
+      padding: 2.5rem;
+      border-radius: 15px;
+      transition: all 0.3s ease;
+      border: 1px solid #00eaff;
+      box-shadow: 0 0 10px #00eaff;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .solution-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      opacity: 0.2;
+      transition: opacity 0.3s ease;
+      z-index: 0;
+    }
+
+    .solution-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 0 20px #00eaff;
+    }
+
+    .solution-card:hover::before {
+      opacity: 0.4;
+    }
+
+    .solution-card .card-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .solution-card.ar-menu::before { background-image: url('./avra.png'); }
+    .solution-card.vr-tour::before { background-image: url('./avra.png'); }
+    .solution-card.web-ar::before { background-image: url('./avra.png'); }
+
+    .team-card {
+      background: linear-gradient(135deg, #1a2a3a, #0a1a2a);
+      padding: 2rem;
+      border-radius: 15px;
+      border: 2px solid #00eaff;
+      box-shadow: 0 0 15px rgba(0, 234, 255, 0.3);
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .team-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 0 25px rgba(0, 234, 255, 0.5);
+    }
+
+    .team-card img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+      border: 3px solid #00eaff;
+      transition: transform 0.3s ease;
+    }
+
+    .team-card:hover img {
+      transform: scale(1.1);
+    }
+
+    .team-card h3 {
+      font-family: 'Neuropol', sans-serif;
+      color: #00eaff;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 10px #00eaff;
+    }
+
+    .team-card p {
+      font-size: 1.1rem;
+      color: #c0d8ff;
+    }
+
+    .btn-group {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+    }
+
+    .btn {
+      background: #00eaff;
+      color: #0a0f1a;
+      padding: 1.2rem 2.5rem;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 10px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px #00eaff;
+    }
+
+    .btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px #00eaff;
+    }
+
+    .fullscreen-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #00eaff;
+      color: #0a0f1a;
+      padding: 1rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      z-index: 1001;
+      box-shadow: 0 0 15px #00eaff;
+      transition: all 0.3s ease;
+    }
+
+    .fullscreen-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px #00eaff;
+    }
+
+    .team-modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, #1a2a3a, #0a1a2a);
+      padding: 2rem;
+      border-radius: 15px;
+      border: 2px solid #00eaff;
+      box-shadow: 0 0 20px rgba(0, 234, 255, 0.5), 0 0 30px rgba(0, 234, 255, 0.3);
+      z-index: 1002;
+      text-align: left;
+      max-width: 480px;
+      width: 90%;
+      animation: modalGlow 1.5s infinite alternate;
+    }
+
+    @keyframes modalGlow {
+      0% { box-shadow: 0 0 20px rgba(0, 234, 255, 0.5), 0 0 30px rgba(0, 234, 255, 0.3); }
+      100% { box-shadow: 0 0 25px rgba(0, 234, 255, 0.7), 0 0 40px rgba(0, 234, 255, 0.5); }
+    }
+
+    .team-modal img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      border: 2px solid #00eaff;
+    }
+
+    .team-modal h3 {
+      font-family: 'Neuropol', sans-serif;
+      color: #00eaff;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 10px #00eaff;
+    }
+
+    .team-modal p {
+      font-size: 1.2rem;
+      color: #c0d8ff;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: #c0d8ff;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .close-modal:hover {
+      color: #00eaff;
+    }
+
+    footer {
+      padding: 3rem 5rem;
+      text-align: center;
+      background: #0a0f1a;
+      color: #7f9db7;
+      font-size: 1rem;
+    }
+
+    /* Карусель цитат */
+    .quotes-carousel {
+      background: linear-gradient(135deg, #0a1a2a, #1a2a3a);
+      padding: 5rem 2rem;
+      position: relative;
+      overflow: hidden;
+      border: 3px solid #00eaff;
+      box-shadow: 0 0 30px rgba(0, 234, 255, 0.4), inset 0 0 15px rgba(0, 234, 255, 0.3);
+      animation: pulseBorder 4s infinite alternate;
+    }
+
+    @keyframes pulseBorder {
+      0% { border-color: #00eaff; box-shadow: 0 0 30px rgba(0, 234, 255, 0.4), inset 0 0 15px rgba(0, 234, 255, 0.3); }
+      100% { border-color: #00d4ff; box-shadow: 0 0 50px rgba(0, 212, 255, 0.6), inset 0 0 25px rgba(0, 212, 255, 0.5); }
+    }
+
+    .quotes-carousel::before {
+      content: '';
+      position: absolute;
+      top: -5%;
+      left: -5%;
+      width: 110%;
+      height: 110%;
+      background: radial-gradient(circle at 30% 30%, rgba(0, 234, 255, 0.08) 0%, transparent 70%);
+      animation: radialPulse 6s infinite ease-in-out;
+      z-index: 0;
+    }
+
+    @keyframes radialPulse {
+      0% { transform: scale(1); opacity: 0.2; }
+      50% { transform: scale(1.2); opacity: 0.1; }
+      100% { transform: scale(1); opacity: 0.2; }
+    }
+
+    .quotes-carousel h2 {
+      font-family: 'Neuropol', sans-serif;
+      font-size: 4rem;
+      color: #00eaff;
+      text-shadow: 0 0 20px #00eaff, 0 0 40px rgba(0, 234, 255, 0.7), 0 0 10px rgba(0, 234, 255, 0.9);
+      text-align: center;
+      margin-bottom: 2.5rem;
+      animation: glitch 2.5s infinite, holographicGlow 3s infinite alternate;
+      position: relative;
+      z-index: 1;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    @keyframes glitch {
+      10% { transform: translate(-2px, 2px) skew(2deg); }
+      20% { transform: translate(2px, -2px) skew(-2deg); }
+      30% { transform: translate(0); }
+      40% { transform: translate(-2px, 0) skew(1deg); }
+      50% { transform: translate(0, 2px) skew(-1deg); }
+      100% { transform: translate(0); }
+    }
+
+    @keyframes holographicGlow {
+      0% { text-shadow: 0 0 20px #00eaff, 0 0 40px rgba(0, 234, 255, 0.7), 0 0 10px rgba(0, 234, 255, 0.9); }
+      100% { text-shadow: 0 0 30px #00d4ff, 0 0 60px rgba(0, 212, 255, 0.9), 0 0 15px rgba(0, 212, 255, 1); }
+    }
+
+    .carousel-container {
+      position: relative;
+      width: 90%;
+      max-width: 950px;
+      margin: 0 auto;
+      overflow: hidden;
+      perspective: 1200px;
+      background: rgba(10, 26, 42, 0.7);
+      border-radius: 20px;
+      padding: 1rem;
+      box-shadow: inset 0 0 20px rgba(0, 234, 255, 0.2);
+    }
+
+    .carousel-wrapper {
+      display: flex;
+      transition: transform 0.8s ease;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .carousel-slide {
+      flex: 0 0 100%;
+      text-align: center;
+      padding: 3rem;
+      background: linear-gradient(135deg, rgba(10, 26, 42, 0.9), rgba(15, 35, 55, 0.9));
+      border: 2px solid rgba(0, 234, 255, 0.4);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 234, 255, 0.3);
+      transform: translateZ(0);
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .carousel-slide::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(0, 234, 255, 0.05) 0%, transparent 70%);
+      animation: hologramSpin 10s infinite linear;
+      z-index: -1;
+    }
+
+    @keyframes hologramSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .carousel-slide p {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    blockquote {
+      font-size: 1.8rem;
+      color: #c0d8ff;
+      border-left: 6px solid #00eaff;
+      padding-left: 2.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+      animation: float 4s infinite ease-in-out, pulseText 3s infinite alternate;
+      text-shadow: 0 0 5px rgba(192, 216, 255, 0.3);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    @keyframes pulseText {
+      0% { text-shadow: 0 0 5px rgba(192, 216, 255, 0.3); }
+      100% { text-shadow: 0 0 10px rgba(192, 216, 255, 0.5); }
+    }
+
+    blockquote::before {
+      content: '“';
+      font-size: 4rem;
+      color: #00eaff;
+      position: absolute;
+      left: -1rem;
+      top: -2rem;
+      text-shadow: 0 0 15px #00eaff, 0 0 25px rgba(0, 234, 255, 0.7);
+      animation: glowQuote 3s infinite alternate;
+    }
+
+    @keyframes glowQuote {
+      0% { text-shadow: 0 0 15px #00eaff, 0 0 25px rgba(0, 234, 255, 0.7); }
+      100% { text-shadow: 0 0 20px #00d4ff, 0 0 35px rgba(0, 212, 255, 0.9); }
+    }
+
+    cite {
+      font-size: 1.4rem;
+      color: #7f9db7;
+      display: block;
+      text-align: right;
+      text-shadow: 0 0 8px rgba(127, 157, 183, 0.6);
+      animation: fadeIn 2s infinite alternate;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+
+    .carousel-prev, .carousel-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: linear-gradient(135deg, rgba(0, 234, 255, 0.1), rgba(10, 26, 42, 0.6));
+      border: 3px solid #00eaff;
+      color: #00eaff;
+      font-size: 3rem;
+      padding: 2rem;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      z-index: 2;
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(0, 234, 255, 0.4), inset 0 0 10px rgba(0, 234, 255, 0.2);
+      backdrop-filter: blur(5px);
+    }
+
+    .carousel-prev {
+      left: 0.5rem;
+    }
+
+    .carousel-next {
+      right: 0.5rem;
+    }
+
+    .carousel-prev:hover, .carousel-next:hover {
+      background: linear-gradient(135deg, rgba(0, 234, 255, 0.4), rgba(10, 26, 42, 0.8));
+      color: #fff;
+      box-shadow: 0 0 40px rgba(0, 234, 255, 0.7), inset 0 0 15px rgba(0, 234, 255, 0.4);
+      transform: scale(1.2) translateY(-5%);
+    }
+
+    .particle-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.3;
+    }
+
+    .progress-bar {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 5px;
+      background: rgba(10, 26, 42, 0.8);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0, 234, 255, 0.2);
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: #00eaff;
+      animation: progress 5s linear infinite;
+      box-shadow: 0 0 15px #00eaff;
+    }
+
+    @keyframes progress {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    /* Адаптивные изменения */
+    @media (max-width: 768px) {
+      .carousel-container {
+        padding: 0.5rem;
+        width: 95%;
+      }
+
+      .carousel-slide {
+        padding: 1.5rem;
+      }
+
+      .carousel-slide blockquote {
+        font-size: 1.2rem;
+      }
+
+      .carousel-slide cite {
+        font-size: 1rem;
+      }
+
+      .carousel-prev, .carousel-next {
+        font-size: 2rem;
+        padding: 1rem;
+      }
+
+      .progress-bar {
+        width: 90%;
+      }
+
+      .section {
+        padding: 5vh 2rem;
+      }
+
+      .section h1, .section h2 {
+        font-size: 2.5rem;
+      }
+
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-group {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 200px;
+        margin: 0 auto;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .quotes-carousel h2 {
+        font-size: 2.5rem;
+      }
+
+      .carousel-container {
+        width: 100%;
+        padding: 0;
+      }
+
+      .carousel-slide {
+        padding: 1rem;
+      }
+
+      .carousel-slide blockquote {
+        font-size: 1rem;
+      }
+
+      .carousel-slide cite {
+        font-size: 0.9rem;
+      }
+
+      .carousel-prev, .carousel-next {
+        font-size: 1.5rem;
+        padding: 0.5rem;
+      }
+
+      header {
+        padding: 1rem 2rem;
+      }
+
+      .logo img {
+        height: 8rem;
+      }
+
+      .team-modal {
+        width: 85%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <div id="preloader">
+      <h1>Initializing AR/VR Future...</h1>
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+
+    <canvas id="bg"></canvas>
+
+    <header>
+      <div class="logo">
+        <img src="./avraG.png" alt="AVRA Logo">
+      </div>
+    </header>
+
+    <section class="section">
+      <h1>Добро пожаловать в эпоху AR/VR</h1>
+      <p>AVRA — пионеры дополненной и виртуальной реальности из Смоленска, создающие революционные решения для малого и среднего бизнеса. Мы превращаем идеи в прибыльные миры, готовые покорить глобальный рынок.</p>
+      <div class="btn-group">
+        <a href="demovr.html" class="btn">Попробовать демo</a>
+        <a href="https://t.me/sandarol" class="btn">Связаться с нами</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Наши решения</h2>
+      <div class="card-grid">
+        <div class="solution-card ar-menu">
+          <div class="card-content">
+            <h3>AR-меню и 3D-презентации</h3>
+            <p>Визуальный опыт для ресторанов и магазинов</p>
+          </div>
+        </div>
+        <div class="solution-card vr-tour">
+          <div class="card-content">
+            <h3>VR-туры и недвижимость</h3>
+            <p>Виртуальные прогулки без границ</p>
+          </div>
+        </div>
+        <div class="solution-card web-ar">
+          <div class="card-content">
+            <h3>WebAR-интеграция</h3>
+            <p>Инновации без приложений</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Почему AVRA — ваш билет в будущее?</h2>
+      <ul>
+        <li>Рост AR/VR-рынка: 20-30% ежегодно</li>
+        <li>70% клиентов предпочитают визуальные форматы</li>
+        <li>Свободная ниша в регионах с огромным потенциалом</li>
+      </ul>
+    </section>
+
+    <section class="section quotes-carousel">
+      <h2>Вдохновение из будущего</h2>
+      <div class="carousel-container">
+        <div class="carousel-wrapper">
+          <div class="carousel-slide">
+            <blockquote>
+              <p>"Виртуальная реальность — это не просто технология, это новый способ существования."</p>
+              <cite>— Марк Цукерберг, CEO Meta</cite>
+            </blockquote>
+          </div>
+          <div class="carousel-slide">
+            <blockquote>
+              <p>"AR и VR изменят мир так же, как интернет изменил коммуникации."</p>
+              <cite>— Тим Кук, CEO Apple</cite>
+            </blockquote>
+          </div>
+          <div class="carousel-slide">
+            <blockquote>
+              <p>"Будущее — это не то, что мы видим, а то, что мы создаем с помощью технологий."</p>
+              <cite>— Илон Маск, CEO Tesla и SpaceX</cite>
+            </blockquote>
+          </div>
+          <div class="carousel-slide">
+            <blockquote>
+              <p>"Дополненная реальность откроет двери в новые измерения опыта."</p>
+              <cite>— Сатья Наделла, CEO Microsoft</cite>
+            </blockquote>
+          </div>
+        </div>
+        <button class="carousel-prev" onclick="moveSlide(-1)">❮</button>
+        <button class="carousel-next" onclick="moveSlide(1)">❯</button>
+        <canvas id="particle-canvas" class="particle-canvas"></canvas>
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Бизнес-модель с миллиардным потенциалом</h2>
+      <p>Доходы: Подписка на WebAR ($10K/месяц), партнерства, кастомные AR/VR-проекты ($50K+). Расходы: Аренда, маркетинг, разработка — $20K/месяц. Точка безубыточности: 2-3 крупных проекта. Окупаемость: 6 месяцев. Рынок: $12B к 2030 году.</p>
+    </section>
+
+    <section class="section">
+      <h2>Команда гениальности</h2>
+      <div class="card-grid">
+        <div class="team-card" onclick="openModal('maxim')">
+          <img src="./3p.png" alt="Максим">
+          <h3>Максим</h3>
+          <p>Гениальный дизайнер и контент-стратег</p>
+        </div>
+        <div class="team-card" onclick="openModal('sergey')">
+          <img src="./2p.png" alt="Сергей">
+          <h3>Сергей</h3>
+          <p>Технический гений и аналитик</p>
+        </div>
+        <div class="team-card" onclick="openModal('alexander')">
+          <img src="./1p.png" alt="Александр">
+          <h3>Александр</h3>
+          <p>Мастер управления и роста</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Инвестируйте в будущее</h2>
+      <p>AR/VR — новая граница технологий. С AVRA вы получаете долю в рынке, который вырастет до $50B к 2040 году. Мы готовы масштабироваться глобально с вашим капиталом.</p>
+      <a href="https://t.me/sandarol" class="btn">Предложить инвестиции</a>
+    </section>
+
+    <footer>
+      © 2025 AVRA | sandarol@mail.ru | Смоленск, Россия | Готовы к партнерству
+    </footer>
+
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">Fullscreen</button>
+  </div>
+
+  <div id="team-modal" class="team-modal">
+    <button class="close-modal" onclick="closeModal()">×</button>
+    <img id="modal-image" src="./avra.png" alt="Team Member">
+    <h3 id="modal-name"></h3>
+    <p id="modal-description"></p>
+  </div>
+
+  <script>
+    window.addEventListener('load', () => {
+      const canvas = document.getElementById('bg');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      function drawBackground() {
+        ctx.fillStyle = '#0a0f1a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < 50; i++) {
+          const x = Math.random() * canvas.width;
+          const y = Math.random() * canvas.height;
+          const size = Math.random() * 30 + 10;
+          ctx.fillStyle = `rgba(0, 234, 255, ${Math.random() * 0.3})`;
+          ctx.fillRect(x, y, size, size);
+        }
+      }
+
+      setInterval(drawBackground, 200);
+
+      const preloader = document.getElementById('preloader');
+      preloader.style.opacity = '0';
+      setTimeout(() => preloader.style.display = 'none', 1000);
+
+      const teamImages = document.querySelectorAll('.team-card img');
+      const solutionImages = document.querySelectorAll('.solution-card::before');
+      teamImages.forEach(img => {
+        img.onerror = () => {
+          console.error(`Ошибка загрузки изображения: ${img.src}`);
+          img.src = './avra.png';
+        };
+      });
+      solutionImages.forEach(card => {
+        const img = new Image();
+        img.src = card.style.backgroundImage.slice(5, -2);
+        img.onerror = () => console.error(`Ошибка загрузки фона: ${img.src}`);
+      });
+
+      window.openModal = function(member) {
+        const modal = document.getElementById('team-modal');
+        const modalImage = document.getElementById('modal-image');
+        const modalName = document.getElementById('modal-name');
+        const modalDescription = document.getElementById('modal-description');
+
+        const data = {
+          'maxim': {
+            image: './max.jpeg',
+            name: 'Максим',
+            description: 'Гениальный дизайнер, создающий визуальные шедевры, которые взрывают рынок.'
+          },
+          'sergey': {
+            image: './ser.jpeg',
+            name: 'Сергей',
+            description: 'Технический гений, ведущий нас к технологическому будущему.'
+          },
+          'alexander': {
+            image: './san.jpeg',
+            name: 'Александр',
+            description: 'Мастер управления, превращающий хаос в миллиардные прибыли.'
+          }
+        };
+
+        const memberData = data[member];
+        modalImage.src = memberData.image;
+        modalName.textContent = memberData.name;
+        modalDescription.textContent = memberData.description;
+        document.body.classList.add('modal-open');
+        modal.style.display = 'block';
+      };
+
+      window.closeModal = function() {
+        const modal = document.getElementById('team-modal');
+        document.body.classList.remove('modal-open');
+        modal.style.display = 'none';
+      };
+
+      window.toggleFullscreen = function() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => {
+            console.error('Ошибка полноэкранного режима:', err);
+          });
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen().catch(err => {
+              console.error('Ошибка выхода из полноэкранного режима:', err);
+            });
+          }
+        }
+      };
+
+      // Карусель цитат
+      let slideIndex = 0;
+      const slides = document.getElementsByClassName("carousel-slide");
+      const wrapper = document.querySelector('.carousel-wrapper');
+
+      function showSlide(n) {
+        if (n >= slides.length) slideIndex = 0;
+        if (n < 0) slideIndex = slides.length - 1;
+        wrapper.style.transform = `translateX(-${slideIndex * 100}%)`;
+        resetProgress();
+      }
+
+      window.moveSlide = function(n) {
+        clearInterval(autoSlide);
+        slideIndex += n;
+        showSlide(slideIndex);
+        autoSlide = setInterval(() => moveSlide(1), 5000);
+      };
+
+      let autoSlide = setInterval(() => moveSlide(1), 5000);
+
+      function resetProgress() {
+        const fill = document.querySelector('.progress-fill');
+        fill.style.animation = 'none';
+        fill.offsetHeight; /* Trigger reflow */
+        fill.style.animation = 'progress 5s linear infinite';
+      }
+
+      // Простая анимация частиц
+      const particleCanvas = document.getElementById('particle-canvas');
+      const particleCtx = particleCanvas.getContext('2d');
+      particleCanvas.width = window.innerWidth;
+      particleCanvas.height = window.innerHeight;
+
+      const particlesArray = [];
+      const numberOfParticles = 50;
+
+      class Particle {
+        constructor() {
+          this.x = Math.random() * particleCanvas.width;
+          this.y = Math.random() * particleCanvas.height;
+          this.size = Math.random() * 3 + 1;
+          this.speedX = Math.random() * 2 - 1;
+          this.speedY = Math.random() * 2 - 1;
+          this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        }
+        update() {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          if (this.x < 0 || this.x > particleCanvas.width) this.speedX = -this.speedX;
+          if (this.y < 0 || this.y > particleCanvas.height) this.speedY = -this.speedY;
+        }
+        draw() {
+          particleCtx.fillStyle = this.color;
+          particleCtx.beginPath();
+          particleCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          particleCtx.fill();
+        }
+      }
+
+      function init() {
+        for (let i = 0; i < numberOfParticles; i++) {
+          particlesArray.push(new Particle());
+        }
+      }
+
+      function animate() {
+        particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+        for (let i = 0; i < particlesArray.length; i++) {
+          particlesArray[i].update();
+          particlesArray[i].draw();
+        }
+        requestAnimationFrame(animate);
+      }
+
+      init();
+      animate();
+
+      window.addEventListener('resize', () => {
+        particleCanvas.width = window.innerWidth;
+        particleCanvas.height = window.innerHeight;
+      });
+    });
+  </script>
+</body>
+</html>
